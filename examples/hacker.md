@@ -33,7 +33,7 @@ drwxr-xr-x  PowerShell
 </p>
 
 <p align="center">
-  <img src="${SERVICES.streak}/?user=sena-labs&theme=dark&hide_border=true&background=0d1117" alt="Streak" />
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=sena-labs&theme=dark&hide_border=true&background=0d1117" alt="Streak" />
 </p>
 
 ## > cat contact.txt

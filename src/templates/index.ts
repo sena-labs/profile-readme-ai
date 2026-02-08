@@ -10,8 +10,8 @@ export interface TemplateOptions {
 // Service URLs — using reliable mirrors to avoid rate limit issues on the main instances
 const SERVICES = {
   stats: 'https://github-readme-stats-sigma-five.vercel.app',
-  streak: '${SERVICES.streak}',
-  capsule: '${SERVICES.capsule}',
+  streak: 'https://github-readme-streak-stats.herokuapp.com',
+  capsule: 'https://capsule-render.vercel.app',
 };
 
 const techBadges: Record<string, string> = {
