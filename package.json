@@ -1,6 +1,6 @@
 {
   "name": "profile-readme-ai",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "🚀 AI-powered GitHub Profile README generator - analyze your repos and generate stunning profiles in seconds",
   "main": "dist/cli.js",
   "bin": {
