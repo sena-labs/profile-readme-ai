@@ -1,6 +1,8 @@
 # Hi there 👋 I'm Ivan Sena
 
+Developer focused on software, AI, embedded systems, and electronics. I turn complex ideas into practical solutions for accessible innovation.
 
+📍 Cento 
 
 ## 🛠 Tech Stack
 
@@ -18,7 +20,7 @@
 
 ## 🤝 Connect
 
-[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github)](https://github.com/sena-labs)
+[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github)](https://github.com/sena-labs) [![Website](https://img.shields.io/badge/-Website-000000?style=flat&logo=safari&logoColor=white)](seensmart.com)
 
 ---
 

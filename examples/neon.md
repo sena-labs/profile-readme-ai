@@ -14,7 +14,7 @@
 
 ```javascript
 const sena-labs = {
-  location: "Cyberspace",
+  location: "Cento",
   company: "Independent",
   languages: ["TypeScript", "PowerShell"],
   currentFocus: "Building the future",
@@ -48,7 +48,7 @@ const sena-labs = {
 
 [![GitHub](https://img.shields.io/badge/GitHub-0D1117?style=for-the-badge&logo=github&logoColor=00F7FF)](https://github.com/sena-labs)
 
-
+[![Website](https://img.shields.io/badge/Website-0D1117?style=for-the-badge&logo=safari&logoColor=00F7FF)](seensmart.com)
 
 </div>
 

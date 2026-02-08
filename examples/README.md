@@ -38,6 +38,7 @@ prai themes
 | [demo-workflow.yml](./demo-workflow.yml) | `prai actions` | GitHub Actions auto-update workflow |
 | [demo-theme.json](./demo-theme.json) | `prai init-theme` | Custom theme scaffold |
 | [multilang-bio.md](./multilang-bio.md) | `prai translate` | Bio in 10 languages (AI) |
+| [stats.json](./stats.json) | `prai stats --json` | GitHub statistics as JSON |
 
 ## Custom Themes
 

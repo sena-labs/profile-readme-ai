@@ -18,7 +18,7 @@
 ║  LEVEL:  2                            ║
 ║  XP:     1 ⭐                          ║
 ║  GUILD:  Solo                         ║
-║  ZONE:   Unknown                      ║
+║  ZONE:   Cento                        ║
 ╚════════════════════════════════════════╝
 ```
 
@@ -42,7 +42,7 @@
 ```
 > github.com/sena-labs
 
-
+> seensmart.com
 ```
 
 ---

@@ -2,7 +2,7 @@
 
 # 👋 Hello, I'm Ivan Sena!
 
-
+Developer focused on software, AI, embedded systems, and electronics. I turn complex ideas into practical solutions for accessible innovation.
 
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-blue?style=social&logo=github)](https://github.com/sena-labs)
 
@@ -13,7 +13,7 @@
 
 ## 🌟 About Me
 
-- 📍 **Location:** Somewhere on Earth
+- 📍 **Location:** Cento
 - 🏢 **Company:** Open to opportunities
 - 📚 **Repositories:** 2
 - ⭐ **Stars Earned:** 1
@@ -43,7 +43,7 @@
 
 [![Email](https://img.shields.io/badge/Email-Contact-blue?style=flat-square&logo=gmail)](mailto:)
 [![GitHub](https://img.shields.io/badge/GitHub-Profile-black?style=flat-square&logo=github)](https://github.com/sena-labs)
-
+[![Website](https://img.shields.io/badge/Website-Visit-green?style=flat-square&logo=safari)](seensmart.com)
 
 </p>
 

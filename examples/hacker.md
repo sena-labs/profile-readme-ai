@@ -14,9 +14,9 @@ $ cat /etc/profile/sena-labs
 
 ```yaml
 name: "Ivan Sena"
-location: "Earth"
+location: "Cento"
 role: "Developer"
-bio: "Building stuff"
+bio: "Developer focused on software, AI, embedded systems, and electronics. I turn complex ideas into practical solutions for accessible innovation."
 ```
 
 ## > ls skills/
@@ -41,7 +41,7 @@ drwxr-xr-x  PowerShell
 ```
 github   :: https://github.com/sena-labs
 
-
+website  :: seensmart.com
 ```
 
 ---

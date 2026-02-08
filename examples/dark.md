@@ -4,7 +4,7 @@
 
 ![Dark Banner](https://capsule-render.vercel.app/api?type=rect&color=0D1117&height=1)
 
-*Building in the shadows*
+*Developer focused on software, AI, embedded systems, and electronics. I turn complex ideas into practical solutions for accessible innovation.*
 
 ![GitHub followers](https://img.shields.io/github/followers/sena-labs?style=flat&color=181717&labelColor=0D1117)
 ![GitHub stars](https://img.shields.io/github/stars/sena-labs?style=flat&color=181717&labelColor=0D1117&affiliations=OWNER)
@@ -17,7 +17,7 @@
 
 | | |
 |:--|:--|
-| 📍 | Unknown |
+| 📍 | Cento |
 | 🏢 | Independent |
 | 📦 | 2 repositories |
 | ⭐ | 1 total stars |
@@ -37,7 +37,7 @@
 
 [![GitHub](https://img.shields.io/badge/-sena-labs-181717?style=flat-square&logo=github)](https://github.com/sena-labs)
 
-
+[![Website](https://img.shields.io/badge/-Website-181717?style=flat-square&logo=safari)](seensmart.com)
 
 ---
 

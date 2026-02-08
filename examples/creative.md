@@ -4,7 +4,7 @@
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F75C7E&center=true&vCenter=true&width=435&lines=Welcome%20to%20my%20profile!)](https://git.io/typing-svg)
 
-
+Developer focused on software, AI, embedded systems, and electronics. I turn complex ideas into practical solutions for accessible innovation.
 
 </div>
 
@@ -12,7 +12,7 @@
 
 ## 🚀 About Me
 
-- 📍 Based in **Planet Earth**
+- 📍 Based in **Cento**
 - 💼 Open to opportunities
 - 🌱 Always learning and growing
 
@@ -40,7 +40,7 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sena-labs)
 
-
+[![Website](https://img.shields.io/badge/Website-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](seensmart.com)
 
 </div>
 

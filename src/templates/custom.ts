@@ -1,6 +1,13 @@
 import fs from 'fs/promises';
 import type { GitHubAnalysis } from '../services/github.js';
 
+// Service URLs — using reliable mirrors to avoid rate limit issues
+const SERVICES = {
+  stats: 'https://github-readme-stats-sigma-five.vercel.app',
+  streak: 'https://github-readme-streak-stats.herokuapp.com',
+  capsule: 'https://capsule-render.vercel.app',
+};
+
 export interface CustomThemeConfig {
   name: string;
   headerStyle: 'banner' | 'text' | 'ascii' | 'none';
@@ -133,7 +140,7 @@ ${topLanguages.map(lang => {
 
 `;
     if (config.showStats) {
-      readme += `<img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=${config.statsTheme}&hide_border=true" alt="GitHub Stats" />
+      readme += `<img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=${config.statsTheme}&hide_border=true" alt="GitHub Stats" />
 
 `;
     }
@@ -143,7 +150,7 @@ ${topLanguages.map(lang => {
 `;
     }
     if (config.showLanguages) {
-      readme += `<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${profile.username}&layout=compact&theme=${config.statsTheme}&hide_border=true" alt="Top Languages" />
+      readme += `<img src="${SERVICES.stats}/api/top-langs/?username=${profile.username}&layout=compact&theme=${config.statsTheme}&hide_border=true" alt="Top Languages" />
 
 `;
     }

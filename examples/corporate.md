@@ -2,7 +2,7 @@
 
 **Software Developer**
 
-
+Developer focused on software, AI, embedded systems, and electronics. I turn complex ideas into practical solutions for accessible innovation.
 
 ---
 
@@ -10,7 +10,7 @@
 
 | | |
 |---|---|
-| 📍 Location | Not specified |
+| 📍 Location | Cento |
 | 🏢 Company | Independent |
 | 📂 Repositories | 2 |
 | ⭐ Total Stars | 1 |
@@ -31,7 +31,7 @@
 
 - **GitHub**: [github.com/sena-labs](https://github.com/sena-labs)
 
-
+- **Website**: [seensmart.com](seensmart.com)
 
 ---
 
