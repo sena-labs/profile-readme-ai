@@ -56,6 +56,9 @@ const developer = {
 - 💡 **AI suggestions** - Get improvement tips for your profile
 - 🌍 **Multi-language** - Generate bio in 10 languages
 - 🖼️ **Social preview** - Generate shareable images
+- 📊 **Stats command** - View detailed GitHub statistics (no AI needed)
+- 🔧 **GitHub Actions** - Auto-update README on a schedule
+- 🔍 **Dry-run mode** - Preview output without saving
 - ⚡ **One command** to generate everything
 
 ## 📦 Installation
@@ -87,6 +90,8 @@ prai generate      # Generate a new profile README
 prai analyze       # Deep analyze profile with AI suggestions
 prai translate     # Generate bio in multiple languages
 prai social        # Generate social preview images
+prai stats         # Show detailed GitHub statistics (no AI required)
+prai actions       # Generate GitHub Actions workflow for auto-update
 prai configure     # Set up API keys (OpenAI, GitHub)
 prai preview       # Preview any GitHub profile README
 prai init-theme    # Create custom theme template
@@ -96,11 +101,15 @@ prai themes        # List available themes
 ### Options
 
 ```bash
--u, --username <username>  GitHub username
--t, --theme <theme>        Theme: minimal, hacker, creative, corporate
--o, --output <path>        Output file (default: ./README.md)
---no-ai                    Skip AI bio generation
---no-stats                 Skip GitHub stats cards
+-u, --username <username>    GitHub username
+-t, --theme <theme>          Theme: minimal, hacker, creative, corporate,
+                             retro, neon, dark, light
+--theme-file <path>          Load custom theme from JSON file
+-o, --output <path>          Output file (default: ./README.md)
+--dry-run                    Preview output without saving to file
+--no-ai                      Skip AI bio generation
+--no-stats                   Skip GitHub stats cards
+--json                       Output as JSON (stats command)
 ```
 
 ## 🎨 Themes

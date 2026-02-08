@@ -30,6 +30,8 @@ profile-readme-ai/
 │   │   ├── analyze.ts      # AI profile analysis
 │   │   ├── translate.ts    # Multi-language bio
 │   │   ├── social.ts       # Social preview images
+│   │   ├── stats.ts        # GitHub statistics
+│   │   ├── actions.ts      # GitHub Actions workflow generator
 │   │   ├── configure.ts    # API key setup
 │   │   ├── preview.ts      # Preview existing README
 │   │   └── init-theme.ts   # Create custom theme
@@ -38,9 +40,15 @@ profile-readme-ai/
 │   │   ├── ai.ts           # Basic AI (OpenAI)
 │   │   ├── ai-advanced.ts  # Deep analysis, suggestions
 │   │   └── preview.ts      # Social image generation
-│   └── templates/
-│       ├── index.ts        # Theme templates
-│       └── custom.ts       # Custom theme loader
+│   ├── templates/
+│   │   ├── index.ts        # Theme templates (8 built-in)
+│   │   └── custom.ts       # Custom theme loader
+│   └── utils/
+│       ├── config.ts       # Singleton config (Conf)
+│       ├── clients.ts      # Singleton API clients (OpenAI, Octokit)
+│       ├── cache.ts        # In-memory GitHub API cache
+│       └── version.ts      # Version info and welcome message
+├── examples/               # Theme output examples
 ├── dist/                   # Compiled JavaScript
 ├── package.json
 ├── tsconfig.json

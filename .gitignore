@@ -22,6 +22,9 @@ npm-debug.log*
 .env
 .env.local
 
+# npm credentials (prevent token leakage)
+.npmrc
+
 # Test coverage
 coverage/
 

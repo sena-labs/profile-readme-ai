@@ -30,10 +30,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **OG image generation** for social media sharing
 
 #### Utilities
+- **Stats command** (`prai stats`) - Detailed GitHub statistics without AI
+  - JSON output mode (`--json`) for scripting/automation
+  - Activity score, profile completeness, language breakdown
+- **Actions command** (`prai actions`) - Generate GitHub Actions workflow for auto-updating README
+  - Configurable cron schedule
+  - Theme selection
 - **Preview command** (`prai preview`) - View any user's profile README
 - **Configure command** (`prai configure`) - Set up API keys
 - **Init theme command** (`prai init-theme`) - Create custom theme template
 - **Themes command** (`prai themes`) - List all available themes
+- **Dry-run mode** (`--dry-run`) - Preview generated output without saving to file
 
 #### Themes Detail
 
@@ -48,22 +55,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | `dark` | Sleek dark mode |
 | `light` | Clean light mode |
 
-### Technical
+### Security
+- Username validation with strict regex (`^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$`)
+- URL encoding for all dynamic URL parameters (`safeUrlEncode`)
+- Markdown sanitization to prevent injection (`sanitizeText`)
+- Error message path sanitization (system paths replaced with `[path]`)
+- Input language validation against whitelist
 
-- Built with TypeScript
+### Performance
+- Singleton clients for OpenAI and Octokit (avoid redundant instantiation)
+- In-memory GitHub API cache with 5-minute TTL
+- Parallel README fetching with concurrency limit (3)
+- `fetchWithTimeout` with AbortController (30s default)
+
+### Technical
+- Built with TypeScript (strict mode)
 - Uses Octokit for GitHub API
-- OpenAI integration for AI features
+- OpenAI GPT-4o-mini for AI features
 - Commander.js for CLI
 - Inquirer.js for interactive prompts
 - Chalk for colored output
 - Ora for spinners
+- Conf for persistent configuration
+- Boxen for welcome banners
 
 ---
 
 ## [Unreleased]
 
 ### Planned
-- GitHub Action for auto-updating README
-- More theme customization options
 - WakaTime integration
 - Spotify Now Playing widget
+- More badge styles and integrations
