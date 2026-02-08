@@ -12,6 +12,10 @@ const SERVICES = {
   stats: 'https://github-readme-stats-sigma-five.vercel.app',
   streak: 'https://github-readme-streak-stats.herokuapp.com',
   capsule: 'https://capsule-render.vercel.app',
+  trophy: 'https://github-profile-trophy-fork-two.vercel.app',
+  activity: 'https://github-readme-activity-graph.vercel.app',
+  summary: 'https://github-profile-summary-cards.vercel.app',
+  typing: 'https://readme-typing-svg.demolab.com',
 };
 
 const techBadges: Record<string, string> = {
@@ -86,231 +90,198 @@ export function generateReadme(analysis: GitHubAnalysis, options: TemplateOption
 
 function generateMinimalTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
   const { profile, topLanguages, totalStars, pinnedRepos } = analysis;
+  const u = profile.username;
+  const name = profile.name || u;
   
-  let readme = `# Hi there 👋 I'm ${profile.name || profile.username}
+  let readme = `<div align="center">
+
+![Header](${SERVICES.capsule}/api?type=waving&color=0:667eea,100:764ba2&height=120&section=header&text=${safeUrlEncode(name)}&fontSize=32&fontColor=fff&animation=fadeIn&fontAlignY=38)
+
+### ${options.tagline || `@${u}`}
 
 ${options.bio || profile.bio || ''}
 
 `;
 
-  if (profile.location || profile.company) {
-    readme += `📍 ${profile.location || ''} ${profile.company ? `@ ${profile.company}` : ''}\n\n`;
-  }
+  // Quick info badges
+  const infoBadges = [];
+  if (profile.location) infoBadges.push(`![Location](https://img.shields.io/badge/📍-${safeUrlEncode(profile.location)}-lightgrey?style=flat)`);
+  if (profile.company) infoBadges.push(`![Company](https://img.shields.io/badge/🏢-${safeUrlEncode(profile.company)}-lightgrey?style=flat)`);
+  infoBadges.push(`![Repos](https://img.shields.io/badge/📦-${profile.publicRepos}_repos-blue?style=flat)`);
+  infoBadges.push(`![Stars](https://img.shields.io/badge/⭐-${totalStars}_stars-yellow?style=flat)`);
+  
+  readme += infoBadges.join(' ') + '\n\n</div>\n\n';
 
   // Tech Stack
   if (topLanguages.length > 0) {
-    readme += `## 🛠 Tech Stack\n\n`;
-    readme += topLanguages.map(lang => getTechBadge(lang)).join(' ') + '\n\n';
+    readme += `## 🛠 Tech Stack\n\n<div align="center">\n\n`;
+    readme += topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-05122A?style=for-the-badge&logo=${techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '')}&logoColor=white)`).join(' ') + '\n\n</div>\n\n';
   }
 
   // Stats
   if (options.includeStats) {
-    readme += `## 📊 GitHub Stats\n\n`;
-    readme += `<p align="center">
-  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=default&hide_border=true" alt="GitHub Stats" />
-</p>\n\n`;
-    readme += `<p align="center">
-  <img src="${SERVICES.stats}/api/top-langs/?username=${profile.username}&layout=compact&theme=default&hide_border=true" alt="Top Languages" />
-</p>\n\n`;
+    readme += `## 📊 GitHub Stats\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=default&hide_border=true&border_radius=10" height="165" alt="Stats" />
+<img src="${SERVICES.stats}/api/top-langs/?username=${u}&layout=compact&theme=default&hide_border=true&border_radius=10" height="165" alt="Languages" />\n\n`;
+    readme += `<img src="${SERVICES.streak}/?user=${u}&theme=default&hide_border=true&border_radius=10" alt="Streak" />\n\n</div>\n\n`;
   }
 
   // Connect
-  readme += `## 🤝 Connect\n\n`;
-  readme += `[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github)](https://github.com/${profile.username})`;
-  
-  if (profile.twitter) {
-    readme += ` [![Twitter](https://img.shields.io/badge/-Twitter-1DA1F2?style=flat&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
-  }
-  if (profile.blog) {
-    readme += ` [![Website](https://img.shields.io/badge/-Website-000000?style=flat&logo=safari&logoColor=white)](${profile.blog})`;
-  }
+  readme += `## 🤝 Connect\n\n<div align="center">\n\n`;
+  readme += `[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](${profile.blog})`;
+  readme += `\n\n</div>\n\n`;
 
-  readme += `\n\n---\n\n`;
-  readme += `⭐ From [${profile.username}](https://github.com/${profile.username})`;
+  // Footer
+  readme += `---\n\n<div align="center">\n\n![Footer](${SERVICES.capsule}/api?type=waving&color=0:667eea,100:764ba2&height=80&section=footer)\n\n</div>`;
 
   return readme;
 }
 
 function generateHackerTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
-  const { profile, topLanguages } = analysis;
+  const { profile, topLanguages, totalStars } = analysis;
+  const u = profile.username;
   
-  let readme = `\`\`\`
- _____  _____  _____  _____  _____  __     _____
-|  _  || __  ||     ||   __||     ||  |   |   __|
-|   __||    -||  |  ||   __||_|_|_||  |__ |   __|
-|__|   |__|__||_____||__|   |_____|_____|_|_____|
+  const asciiHeader = `
+██╗  ██╗ █████╗  ██████╗██╗  ██╗███████╗██████╗ 
+██║  ██║██╔══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+███████║███████║██║     █████╔╝ █████╗  ██████╔╝
+██╔══██║██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+██║  ██║██║  ██║╚██████╗██║  ██╗███████╗██║  ██║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝`;
 
-\`\`\`
+  let readme = `<div align="center">\n\n\`\`\`\n${asciiHeader}\n\`\`\`\n\n`;
+  readme += `[![Typing SVG](${SERVICES.typing}?font=Fira+Code&size=22&duration=3000&pause=1000&color=00FF00&center=true&vCenter=true&width=500&lines=${safeUrlEncode('> Initializing terminal...')};${safeUrlEncode(`> Welcome, ${profile.name || u}`)};${safeUrlEncode('> Access granted_')})](https://git.io/typing-svg)\n\n</div>\n\n`;
 
-## > whoami
+  readme += `## \$ whoami\n\n\`\`\`bash\ncat /etc/passwd | grep ${u}\n\`\`\`\n\n`;
+  readme += `\`\`\`yaml\n# ~/.config/developer.yml\nuser:\n  name: "${profile.name || u}"\n  handle: "@${u}"\n  location: "${profile.location || '/dev/null'}"\n  company: "${profile.company || 'self-employed'}"\n  bio: "${sanitizeText(options.bio || profile.bio, 100) || 'Building the future'}"\n  \nstats:\n  repos: ${profile.publicRepos}\n  stars: ${totalStars}\n  followers: ${profile.followers}\n\`\`\`\n\n`;
 
-\`\`\`bash
-$ cat /etc/profile/${profile.username}
-\`\`\`
-
-\`\`\`yaml
-name: "${profile.name || profile.username}"
-location: "${profile.location || 'Earth'}"
-role: "${options.tagline || 'Developer'}"
-bio: "${options.bio || profile.bio || 'Building stuff'}"
-\`\`\`
-
-## > ls skills/
-
-\`\`\`bash
-${topLanguages.map(lang => `drwxr-xr-x  ${lang}`).join('\n')}
-\`\`\`
-
-`;
+  readme += `## \$ ls -la ~/skills/\n\n\`\`\`bash\ntotal ${topLanguages.length}\n`;
+  topLanguages.forEach((lang, i) => {
+    const perms = i === 0 ? 'drwxrwxrwx' : 'drwxr-xr-x';
+    const size = String(1000 - i * 100).padStart(4);
+    readme += `${perms}  ${u}  ${size}  ${lang}\n`;
+  });
+  readme += `\`\`\`\n\n`;
 
   if (options.includeStats) {
-    readme += `## > git log --oneline
-
-<p align="center">
-  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=dark&hide_border=true&bg_color=0d1117" alt="Stats" />
-</p>
-
-<p align="center">
-  <img src="${SERVICES.streak}/?user=${profile.username}&theme=dark&hide_border=true&background=0d1117" alt="Streak" />
-</p>
-
-`;
+    readme += `## \$ neofetch --stats\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=github_dark&hide_border=true&bg_color=0d1117&title_color=00ff00&icon_color=00ff00&text_color=c9d1d9" height="180" />\n`;
+    readme += `<img src="${SERVICES.stats}/api/top-langs/?username=${u}&layout=compact&theme=github_dark&hide_border=true&bg_color=0d1117&title_color=00ff00&text_color=c9d1d9" height="180" />\n\n`;
+    readme += `<img src="${SERVICES.streak}/?user=${u}&theme=dark&hide_border=true&background=0d1117&stroke=00ff00&ring=00ff00&fire=ff6600&currStreakLabel=00ff00" />\n\n`;
+    readme += `<img src="${SERVICES.activity}/graph?username=${u}&theme=github-compact&hide_border=true&bg_color=0d1117&color=00ff00&line=00ff00&point=ffffff" width="95%" />\n\n</div>\n\n`;
   }
 
-  readme += `## > cat contact.txt
+  readme += `## \$ cat ~/.ssh/socials.pub\n\n\`\`\`\n`;
+  readme += `github    = git@github.com:${u}\n`;
+  if (profile.twitter) readme += `twitter   = @${profile.twitter}\n`;
+  if (profile.blog) readme += `website   = ${profile.blog}\n`;
+  readme += `\`\`\`\n\n`;
 
-\`\`\`
-github   :: https://github.com/${profile.username}
-${profile.twitter ? `twitter  :: https://twitter.com/${profile.twitter}` : ''}
-${profile.blog ? `website  :: ${profile.blog}` : ''}
-\`\`\`
-
----
-
-\`\`\`
-[${profile.username}@github ~]$ exit
-\`\`\`
-`;
+  readme += `---\n\n<div align="center">\n\n\`\`\`bash\n[${u}@github ~]$ echo "Thanks for visiting!" && exit 0\n\`\`\`\n\n`;
+  readme += `![Visitors](https://komarev.com/ghpvc/?username=${u}&color=00ff00&style=flat-square&label=VISITORS)\n\n</div>`;
 
   return readme;
 }
 
 function generateCreativeTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
-  const { profile, topLanguages } = analysis;
+  const { profile, topLanguages, totalStars, pinnedRepos } = analysis;
+  const u = profile.username;
+  const name = profile.name || u;
   
-  let readme = `<div align="center">
+  let readme = `<div align="center">\n\n`;
+  readme += `![Header](${SERVICES.capsule}/api?type=waving&color=0:fe8c00,50:f83600,100:fe8c00&height=200&section=header&text=${safeUrlEncode(name)}&fontSize=60&fontColor=fff&animation=twinkling&fontAlignY=35&desc=${safeUrlEncode(options.tagline || '✨ Creative Developer ✨')}&descAlignY=55&descSize=18)\n\n`;
+  readme += `[![Typing SVG](${SERVICES.typing}?font=Pacifico&size=28&duration=4000&pause=1000&color=F83600&center=true&vCenter=true&width=600&lines=${safeUrlEncode('Welcome to my creative space!')};${safeUrlEncode(options.bio || profile.bio || 'Building beautiful things')};${safeUrlEncode('✨ Let\'s create together! ✨')})](https://git.io/typing-svg)\n\n`;
+  
+  // Animated badges row
+  readme += `![Stars](https://img.shields.io/badge/⭐_Stars-${totalStars}-F83600?style=for-the-badge&labelColor=1a1a2e) `;
+  readme += `![Repos](https://img.shields.io/badge/📦_Repos-${profile.publicRepos}-fe8c00?style=for-the-badge&labelColor=1a1a2e) `;
+  readme += `![Followers](https://img.shields.io/badge/👥_Followers-${profile.followers}-F83600?style=for-the-badge&labelColor=1a1a2e)\n\n</div>\n\n`;
 
-# ✨ ${profile.name || profile.username} ✨
+  // About section with emojis
+  readme += `## ✨ About Me\n\n`;
+  readme += `<img align="right" width="300" src="${SERVICES.stats}/api/top-langs/?username=${u}&layout=donut&theme=radical&hide_border=true&bg_color=1a1a2e" />\n\n`;
+  readme += `- 🌍 **Location:** ${profile.location || 'Somewhere creative'}\n`;
+  readme += `- 🏢 **Company:** ${profile.company || 'Freelance Creator'}\n`;
+  readme += `- 🎨 **Focus:** Building beautiful & functional apps\n`;
+  readme += `- 💫 **Motto:** *"Code is poetry"*\n\n`;
+  readme += `<br clear="both"/>\n\n`;
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F75C7E&center=true&vCenter=true&width=435&lines=${encodeURIComponent(options.tagline || 'Welcome to my profile!')})](https://git.io/typing-svg)
-
-${options.bio || profile.bio || ''}
-
-</div>
-
----
-
-## 🚀 About Me
-
-- 📍 Based in **${profile.location || 'Planet Earth'}**
-- 💼 ${profile.company ? `Working at **${profile.company}**` : 'Open to opportunities'}
-- 🌱 Always learning and growing
-
-## 🎨 Tech Stack
-
-<div align="center">
-
-${topLanguages.map(lang => getTechBadge(lang)).join(' ')}
-
-</div>
-
-`;
+  // Tech Stack with colorful badges
+  readme += `## 🎨 Tech Palette\n\n<div align="center">\n\n`;
+  const colors = ['F83600', 'fe8c00', 'F83600', 'fe8c00', 'F83600'];
+  readme += topLanguages.map((lang, i) => `![${lang}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-${colors[i % colors.length]}?style=for-the-badge&logo=${techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '')}&logoColor=white)`).join(' ') + '\n\n</div>\n\n';
 
   if (options.includeStats) {
-    readme += `## 📈 Stats
-
-<div align="center">
-
-<img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=radical&hide_border=true" alt="GitHub Stats" />
-
-<img src="${SERVICES.streak}/?user=${profile.username}&theme=radical&hide_border=true" alt="GitHub Streak" />
-
-</div>
-
-`;
+    readme += `## 📊 GitHub Stats\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=radical&hide_border=true&bg_color=1a1a2e&border_radius=15" height="180" />\n`;
+    readme += `<img src="${SERVICES.streak}/?user=${u}&theme=radical&hide_border=true&background=1a1a2e&border_radius=15" height="180" />\n\n`;
+    // Trophy row
+    readme += `<img src="${SERVICES.trophy}/?username=${u}&theme=radical&no-frame=true&no-bg=true&row=1&column=6" width="100%" />\n\n`;
+    readme += `<img src="${SERVICES.activity}/graph?username=${u}&theme=redical&hide_border=true&bg_color=1a1a2e&area=true" width="95%" />\n\n</div>\n\n`;
   }
 
-  readme += `## 🌐 Let's Connect!
+  readme += `## 🌐 Let's Connect!\n\n<div align="center">\n\n`;
+  readme += `[![GitHub](https://img.shields.io/badge/GitHub-F83600?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-fe8c00?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-F83600?style=for-the-badge&logo=safari&logoColor=white)](${profile.blog})`;
+  readme += `\n\n</div>\n\n`;
 
-<div align="center">
-
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${profile.username})
-${profile.twitter ? `[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})` : ''}
-${profile.blog ? `[![Website](https://img.shields.io/badge/Website-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](${profile.blog})` : ''}
-
-</div>
-
----
-
-<div align="center">
-
-### 💜 Thanks for visiting!
-
-![Profile Views](https://komarev.com/ghpvc/?username=${profile.username}&color=blueviolet&style=flat-square)
-
-</div>
-`;
+  // Footer
+  readme += `---\n\n<div align="center">\n\n`;
+  readme += `![Visitors](https://komarev.com/ghpvc/?username=${u}&color=F83600&style=for-the-badge&label=VISITORS)\n\n`;
+  readme += `![Footer](${SERVICES.capsule}/api?type=waving&color=0:fe8c00,50:f83600,100:fe8c00&height=100&section=footer)\n\n</div>`;
 
   return readme;
 }
 
 function generateCorporateTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
   const { profile, topLanguages, totalStars } = analysis;
+  const u = profile.username;
+  const name = profile.name || u;
   
-  let readme = `# ${profile.name || profile.username}
+  let readme = `<div align="center">\n\n`;
+  readme += `![Header](${SERVICES.capsule}/api?type=rect&color=0:1a365d,100:2d3748&height=120&section=header&text=${safeUrlEncode(name)}&fontSize=40&fontColor=fff&fontAlignY=50)\n\n`;
+  readme += `### ${options.tagline || 'Software Engineer'}\n\n`;
+  readme += `*${options.bio || profile.bio || 'Delivering quality software solutions'}*\n\n`;
+  
+  // Professional badges
+  readme += `![Experience](https://img.shields.io/badge/Repositories-${profile.publicRepos}-1a365d?style=flat-square) `;
+  readme += `![Stars](https://img.shields.io/badge/Stars-${totalStars}-1a365d?style=flat-square) `;
+  readme += `![Network](https://img.shields.io/badge/Followers-${profile.followers}-1a365d?style=flat-square)\n\n</div>\n\n`;
+  
+  readme += `---\n\n`;
 
-**${options.tagline || 'Software Developer'}**
+  // Professional Summary in clean format
+  readme += `## Professional Profile\n\n`;
+  readme += `| Field | Details |\n|:------|:--------|\n`;
+  readme += `| **Name** | ${name} |\n`;
+  readme += `| **Location** | ${profile.location || 'Remote'} |\n`;
+  readme += `| **Organization** | ${profile.company || 'Independent Consultant'} |\n`;
+  readme += `| **Public Repositories** | ${profile.publicRepos} |\n`;
+  readme += `| **Total Stars** | ${totalStars} |\n\n`;
 
-${options.bio || profile.bio || ''}
-
----
-
-## Professional Summary
-
-| | |
-|---|---|
-| 📍 Location | ${profile.location || 'Not specified'} |
-| 🏢 Company | ${profile.company || 'Independent'} |
-| 📂 Repositories | ${profile.publicRepos} |
-| ⭐ Total Stars | ${totalStars} |
-| 👥 Followers | ${profile.followers} |
-
-## Technical Expertise
-
-${topLanguages.map(lang => `- ${lang}`).join('\n')}
-
-`;
+  // Technical Expertise with clean badges
+  readme += `## Technical Expertise\n\n<div align="center">\n\n`;
+  readme += topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-1a365d?style=flat-square&logo=${techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '')}&logoColor=white)`).join(' ') + '\n\n</div>\n\n';
 
   if (options.includeStats) {
-    readme += `## GitHub Analytics
-
-<p>
-  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=graywhite&hide_border=true" alt="GitHub Statistics" />
-</p>
-
-`;
+    readme += `## Performance Metrics\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=graywhite&hide_border=true&icon_color=1a365d&title_color=1a365d" height="170" />\n`;
+    readme += `<img src="${SERVICES.stats}/api/top-langs/?username=${u}&layout=compact&theme=graywhite&hide_border=true&title_color=1a365d" height="170" />\n\n`;
+    readme += `<img src="${SERVICES.summary}/api/cards/profile-details?username=${u}&theme=default" width="100%" />\n\n</div>\n\n`;
   }
 
-  readme += `## Contact
+  readme += `## Contact Information\n\n`;
+  readme += `<div align="center">\n\n`;
+  readme += `[![GitHub](https://img.shields.io/badge/GitHub-1a365d?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-1a365d?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-1a365d?style=for-the-badge&logo=safari&logoColor=white)](${profile.blog})`;
+  readme += `\n\n</div>\n\n`;
 
-- **GitHub**: [github.com/${profile.username}](https://github.com/${profile.username})
-${profile.twitter ? `- **Twitter**: [@${profile.twitter}](https://twitter.com/${profile.twitter})` : ''}
-${profile.blog ? `- **Website**: [${profile.blog}](${profile.blog})` : ''}
-
----
-
-*Open to collaborations and opportunities.*
-`;
+  readme += `---\n\n<div align="center">\n\n*Open to collaborations and consulting opportunities*\n\n`;
+  readme += `![Footer](${SERVICES.capsule}/api?type=rect&color=0:1a365d,100:2d3748&height=60&section=footer)\n\n</div>`;
 
   return readme;
 }
@@ -318,149 +289,117 @@ ${profile.blog ? `- **Website**: [${profile.blog}](${profile.blog})` : ''}
 // ==================== RETRO THEME ====================
 function generateRetroTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
   const { profile, topLanguages, totalStars } = analysis;
+  const u = profile.username;
+  const name = profile.name || u;
+
+  let readme = `<div align="center">\n\n`;
+  readme += `![Header](${SERVICES.capsule}/api?type=waving&color=0:b8860b,50:daa520,100:ffd700&height=150&section=header&text=${safeUrlEncode('🎮 ' + name + ' 🎮')}&fontSize=40&fontColor=000&animation=fadeIn&fontAlignY=35)\n\n`;
   
-  const pixelArt = `
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-░░█░█░█▀▀░█░░░█░░░█▀█░░░█░█░█▀█░█▀▄░█░░░█▀▄░█░░░█▀▀░░░░░░░░
-░░█▀█░█▀▀░█░░░█░░░█░█░░░█▄█░█░█░█▀▄░█░░░█░█░▀░░░▀▀█░░░░░░░░
-░░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░░░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀░░▀░░░▀▀▀░░░░░░░░
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-`;
+  readme += `\`\`\`\n`;
+  readme += `╔══════════════════════════════════════════════════╗\n`;
+  readme += `║     🕹️  R E T R O   G A M E R   S T A T S  🕹️      ║\n`;
+  readme += `╠══════════════════════════════════════════════════╣\n`;
+  readme += `║  PLAYER   │ ${name.padEnd(35)} ║\n`;
+  readme += `║  LEVEL    │ ${String(profile.publicRepos + ' REPOS').padEnd(35)} ║\n`;
+  readme += `║  XP       │ ${String(totalStars + ' ★ STARS').padEnd(35)} ║\n`;
+  readme += `║  GUILD    │ ${(profile.company || 'SOLO PLAYER').padEnd(35)} ║\n`;
+  readme += `║  ZONE     │ ${(profile.location || 'WORLD 1-1').padEnd(35)} ║\n`;
+  readme += `╚══════════════════════════════════════════════════╝\n`;
+  readme += `\`\`\`\n\n</div>\n\n`;
 
-  let readme = `\`\`\`
-${pixelArt}
-\`\`\`
-
-<div align="center">
-
-## 🕹️ PLAYER STATS 🕹️
-
-\`\`\`
-╔════════════════════════════════════════╗
-║  PLAYER: ${(profile.name || profile.username).padEnd(28)} ║
-║  LEVEL:  ${String(profile.publicRepos).padEnd(28)} ║
-║  XP:     ${String(totalStars + ' ⭐').padEnd(28)} ║
-║  GUILD:  ${(profile.company || 'Solo').padEnd(28)} ║
-║  ZONE:   ${(profile.location || 'Unknown').padEnd(28)} ║
-╚════════════════════════════════════════╝
-\`\`\`
-
-</div>
-
-## 🎮 SKILLS UNLOCKED
-
-\`\`\`
-`;
-
+  // Skills as progress bars
+  readme += `## 🎮 SKILLS UNLOCKED\n\n\`\`\`\n`;
   topLanguages.forEach((lang, i) => {
-    const bar = '█'.repeat(Math.min(10 - i * 2, 10));
-    readme += `[${lang.padEnd(12)}] ${bar}\n`;
+    const level = 10 - i;
+    const filled = '█'.repeat(level);
+    const empty = '░'.repeat(10 - level);
+    readme += `${lang.padEnd(12)} [${filled}${empty}] LVL ${level}\n`;
   });
+  readme += `\`\`\`\n\n`;
 
-  readme += `\`\`\`
-
-`;
+  // Tech badges retro style
+  readme += `<div align="center">\n\n`;
+  readme += topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-daa520?style=flat-square&logo=${techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '')}&logoColor=black)`).join(' ') + '\n\n</div>\n\n';
 
   if (options.includeStats) {
-    readme += `## 📊 ACHIEVEMENTS
-
-<p align="center">
-  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=gruvbox&hide_border=true" alt="Stats" />
-</p>
-
-`;
+    readme += `## 🏆 ACHIEVEMENTS\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=gruvbox&hide_border=true&bg_color=282828" height="165" />\n`;
+    readme += `<img src="${SERVICES.streak}/?user=${u}&theme=gruvbox&hide_border=true&background=282828" height="165" />\n\n`;
+    readme += `<img src="${SERVICES.trophy}/?username=${u}&theme=gruvbox&no-frame=true&no-bg=true&row=1&column=6" width="100%" />\n\n</div>\n\n`;
   }
 
-  readme += `## 🔗 LINKS
+  readme += `## 🔗 WARP ZONE\n\n<div align="center">\n\n`;
+  readme += `[![GitHub](https://img.shields.io/badge/GITHUB-daa520?style=for-the-badge&logo=github&logoColor=black)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/TWITTER-daa520?style=for-the-badge&logo=twitter&logoColor=black)](https://twitter.com/${profile.twitter})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/WEBSITE-daa520?style=for-the-badge&logo=safari&logoColor=black)](${profile.blog})`;
+  readme += `\n\n</div>\n\n`;
 
-\`\`\`
-> github.com/${profile.username}
-${profile.twitter ? `> twitter.com/${profile.twitter}` : ''}
-${profile.blog ? `> ${profile.blog}` : ''}
-\`\`\`
-
----
-
-<div align="center">
-
-**INSERT COIN TO CONTINUE...**
-
-![Visitors](https://komarev.com/ghpvc/?username=${profile.username}&color=orange&style=pixel)
-
-</div>
-`;
+  readme += `---\n\n<div align="center">\n\n`;
+  readme += `**🎮 INSERT COIN TO CONTINUE 🎮**\n\n`;
+  readme += `![Visitors](https://komarev.com/ghpvc/?username=${u}&color=daa520&style=pixel&label=VISITORS)\n\n`;
+  readme += `![Footer](${SERVICES.capsule}/api?type=waving&color=0:b8860b,50:daa520,100:ffd700&height=80&section=footer)\n\n</div>`;
 
   return readme;
 }
 
 // ==================== NEON THEME ====================
 function generateNeonTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
-  const { profile, topLanguages } = analysis;
+  const { profile, topLanguages, totalStars } = analysis;
+  const u = profile.username;
+  const name = profile.name || u;
   
-  let readme = `<div align="center">
+  let readme = `<div align="center">\n\n`;
+  readme += `![Header](${SERVICES.capsule}/api?type=waving&color=0:0f0c29,50:302b63,100:24243e&height=200&section=header&text=${safeUrlEncode(name)}&fontSize=70&fontColor=00f7ff&animation=twinkling&fontAlignY=35&desc=${safeUrlEncode('⚡ ' + (options.tagline || 'NEON CODER') + ' ⚡')}&descAlignY=55&descSize=20&descColor=ff00ff)\n\n`;
+  
+  readme += `[![Typing SVG](${SERVICES.typing}?font=Orbitron&size=24&duration=3000&pause=1000&color=00F7FF&center=true&vCenter=true&width=600&lines=${safeUrlEncode('「 WELCOME TO THE GRID 」')};${safeUrlEncode('「 ' + (options.bio || profile.bio || 'BUILDING THE FUTURE') + ' 」')};${safeUrlEncode('「 SYSTEM ONLINE 」')})](https://git.io/typing-svg)\n\n`;
+  
+  // Neon stat badges
+  readme += `![Stars](https://img.shields.io/badge/⭐_${totalStars}-00f7ff?style=for-the-badge&labelColor=0d1117) `;
+  readme += `![Repos](https://img.shields.io/badge/📦_${profile.publicRepos}-ff00ff?style=for-the-badge&labelColor=0d1117) `;
+  readme += `![Followers](https://img.shields.io/badge/👥_${profile.followers}-00f7ff?style=for-the-badge&labelColor=0d1117)\n\n</div>\n\n`;
 
-![Header](${SERVICES.capsule}/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=${encodeURIComponent(profile.name || profile.username)}&fontSize=80&fontColor=fff&animation=twinkling&fontAlignY=35)
+  readme += `---\n\n`;
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Orbitron&size=25&pause=1000&color=00F7FF&center=true&vCenter=true&width=600&lines=${encodeURIComponent(options.tagline || 'Welcome to my neon world!')})](https://git.io/typing-svg)
+  // Code block with neon aesthetic
+  readme += `## ⚡ SYSTEM.INFO\n\n`;
+  readme += `\`\`\`typescript\n`;
+  readme += `interface Developer {\n`;
+  readme += `  name: string;\n`;
+  readme += `  location: string;\n`;
+  readme += `  status: 'online' | 'coding' | 'sleeping';\n`;
+  readme += `  stack: string[];\n`;
+  readme += `}\n\n`;
+  readme += `const ${u.replace(/-/g, '_')}: Developer = {\n`;
+  readme += `  name: "${name}",\n`;
+  readme += `  location: "${profile.location || 'THE GRID'}",\n`;
+  readme += `  status: "coding",\n`;
+  readme += `  stack: [${topLanguages.map(l => `"${l}"`).join(', ')}]\n`;
+  readme += `};\n`;
+  readme += `\`\`\`\n\n`;
 
-</div>
-
----
-
-<img align="right" width="400" src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117" />
-
-## ⚡ ABOUT ME
-
-\`\`\`javascript
-const ${profile.username} = {
-  location: "${profile.location || 'Cyberspace'}",
-  company: "${profile.company || 'Independent'}",
-  languages: [${topLanguages.map(l => `"${l}"`).join(', ')}],
-  currentFocus: "Building the future",
-  funFact: "I code in neon lights"
-};
-\`\`\`
-
-<br clear="both">
-
-## 💠 TECH ARSENAL
-
-<div align="center">
-
-${topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/${encodeURIComponent(lang)}-00F7FF?style=for-the-badge&logo=${techBadges[lang] || lang.toLowerCase()}&logoColor=black)`).join(' ')}
-
-</div>
-
-`;
+  // Tech badges with neon glow effect colors
+  readme += `## 👠 TECH ARSENAL\n\n<div align="center">\n\n`;
+  const neonColors = ['00f7ff', 'ff00ff', '00f7ff', 'ff00ff', '00f7ff'];
+  readme += topLanguages.map((lang, i) => `![${lang}](https://img.shields.io/badge/${safeUrlEncode(lang)}-${neonColors[i % neonColors.length]}?style=for-the-badge&logo=${techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '')}&logoColor=0d1117)`).join(' ') + '\n\n</div>\n\n';
 
   if (options.includeStats) {
-    readme += `## 📈 POWER LEVELS
-
-<div align="center">
-
-<img src="${SERVICES.streak}/?user=${profile.username}&theme=tokyonight&hide_border=true&background=0D1117" alt="Streak" />
-
-<img src="${SERVICES.stats}/api/top-langs/?username=${profile.username}&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117" alt="Languages" />
-
-</div>
-
-`;
+    readme += `## 📊 POWER LEVELS\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=00f7ff&icon_color=ff00ff&text_color=ffffff" height="180" />\n`;
+    readme += `<img src="${SERVICES.streak}/?user=${u}&theme=tokyonight&hide_border=true&background=0d1117&stroke=00f7ff&ring=ff00ff&fire=ff00ff&currStreakLabel=00f7ff" height="180" />\n\n`;
+    readme += `<img src="${SERVICES.stats}/api/top-langs/?username=${u}&layout=donut&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=00f7ff" width="300" />\n\n`;
+    readme += `<img src="${SERVICES.activity}/graph?username=${u}&theme=tokyo-night&hide_border=true&bg_color=0d1117&color=00f7ff&line=ff00ff&point=ffffff" width="95%" />\n\n`;
+    readme += `<img src="${SERVICES.trophy}/?username=${u}&theme=discord&no-frame=true&no-bg=true&row=1&column=6" width="100%" />\n\n</div>\n\n`;
   }
 
-  readme += `## 🌐 CONNECT
+  readme += `## 🌐 NETWORK\n\n<div align="center">\n\n`;
+  readme += `[![GitHub](https://img.shields.io/badge/GITHUB-0d1117?style=for-the-badge&logo=github&logoColor=00f7ff)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/TWITTER-0d1117?style=for-the-badge&logo=twitter&logoColor=ff00ff)](https://twitter.com/${profile.twitter})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/WEBSITE-0d1117?style=for-the-badge&logo=safari&logoColor=00f7ff)](${profile.blog})`;
+  readme += `\n\n</div>\n\n`;
 
-<div align="center">
-
-[![GitHub](https://img.shields.io/badge/GitHub-0D1117?style=for-the-badge&logo=github&logoColor=00F7FF)](https://github.com/${profile.username})
-${profile.twitter ? `[![Twitter](https://img.shields.io/badge/Twitter-0D1117?style=for-the-badge&logo=twitter&logoColor=00F7FF)](https://twitter.com/${profile.twitter})` : ''}
-${profile.blog ? `[![Website](https://img.shields.io/badge/Website-0D1117?style=for-the-badge&logo=safari&logoColor=00F7FF)](${profile.blog})` : ''}
-
-</div>
-
----
-
-![Footer](${SERVICES.capsule}/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer)
-`;
+  readme += `---\n\n<div align="center">\n\n`;
+  readme += `![Visitors](https://komarev.com/ghpvc/?username=${u}&color=00f7ff&style=for-the-badge&label=VISITORS)\n\n`;
+  readme += `![Footer](${SERVICES.capsule}/api?type=waving&color=0:0f0c29,50:302b63,100:24243e&height=100&section=footer)\n\n</div>`;
 
   return readme;
 }
@@ -468,62 +407,51 @@ ${profile.blog ? `[![Website](https://img.shields.io/badge/Website-0D1117?style=
 // ==================== DARK THEME ====================
 function generateDarkTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
   const { profile, topLanguages, totalStars } = analysis;
+  const u = profile.username;
+  const name = profile.name || u;
+
+  let readme = `<div align="center">\n\n`;
+  readme += `![Header](${SERVICES.capsule}/api?type=waving&color=0:0d1117,50:161b22,100:0d1117&height=180&section=header&text=${safeUrlEncode(name)}&fontSize=50&fontColor=c9d1d9&animation=fadeIn&fontAlignY=35&desc=${safeUrlEncode(options.tagline || '🖤 Building in the shadows')}&descAlignY=55&descSize=16&descColor=8b949e)\n\n`;
   
-  let readme = `<div align="center">
+  readme += `*${options.bio || profile.bio || 'Crafting code in dark mode'}*\n\n`;
+  
+  // Subtle stat badges
+  readme += `![Stars](https://img.shields.io/badge/⭐_${totalStars}-0d1117?style=flat-square&labelColor=161b22) `;
+  readme += `![Repos](https://img.shields.io/badge/📦_${profile.publicRepos}-0d1117?style=flat-square&labelColor=161b22) `;
+  readme += `![Followers](https://img.shields.io/badge/👥_${profile.followers}-0d1117?style=flat-square&labelColor=161b22)\n\n</div>\n\n`;
+  
+  readme += `---\n\n`;
 
-# ${profile.name || profile.username}
+  // About section
+  readme += `## 🖤 About\n\n`;
+  readme += `| | |\n|:--|:--|\n`;
+  readme += `| 📍 **Location** | ${profile.location || 'The shadows'} |\n`;
+  readme += `| 🏢 **Organization** | ${profile.company || 'Independent'} |\n`;
+  readme += `| 📦 **Repositories** | ${profile.publicRepos} |\n`;
+  readme += `| ⭐ **Stars** | ${totalStars} |\n\n`;
 
-![Dark Banner](${SERVICES.capsule}/api?type=rect&color=0D1117&height=1)
-
-*${options.bio || profile.bio || 'Building in the shadows'}*
-
-![GitHub followers](https://img.shields.io/github/followers/${profile.username}?style=flat&color=181717&labelColor=0D1117)
-![GitHub stars](https://img.shields.io/github/stars/${profile.username}?style=flat&color=181717&labelColor=0D1117&affiliations=OWNER)
-
-</div>
-
----
-
-### 🖤 About
-
-| | |
-|:--|:--|
-| 📍 | ${profile.location || 'Unknown'} |
-| 🏢 | ${profile.company || 'Independent'} |
-| 📦 | ${profile.publicRepos} repositories |
-| ⭐ | ${totalStars} total stars |
-
-### 🛠️ Stack
-
-${topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/-${encodeURIComponent(lang)}-0D1117?style=flat-square&logo=${techBadges[lang] || lang.toLowerCase()}&logoColor=white)`).join(' ')}
-
-`;
+  // Tech stack
+  readme += `## 🛠️ Stack\n\n<div align="center">\n\n`;
+  readme += topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-0d1117?style=for-the-badge&logo=${techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '')}&logoColor=c9d1d9)`).join(' ') + '\n\n</div>\n\n';
 
   if (options.includeStats) {
-    readme += `### 📊 Stats
-
-<p align="center">
-  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=dark&hide_border=true&bg_color=0D1117&title_color=ffffff&text_color=9f9f9f&icon_color=ffffff" width="49%" />
-  <img src="${SERVICES.streak}/?user=${profile.username}&theme=dark&hide_border=true&background=0D1117&stroke=ffffff&ring=ffffff&fire=ffffff&currStreakLabel=ffffff" width="49%" />
-</p>
-
-`;
+    readme += `## 📊 Stats\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=github_dark&hide_border=true&bg_color=0d1117" height="170" />\n`;
+    readme += `<img src="${SERVICES.streak}/?user=${u}&theme=github-dark-blue&hide_border=true&background=0d1117" height="170" />\n\n`;
+    readme += `<img src="${SERVICES.stats}/api/top-langs/?username=${u}&layout=compact&theme=github_dark&hide_border=true&bg_color=0d1117" />\n\n`;
+    readme += `<img src="${SERVICES.activity}/graph?username=${u}&theme=github-compact&hide_border=true&bg_color=0d1117&color=c9d1d9&line=58a6ff&point=ffffff" width="95%" />\n\n`;
+    readme += `<img src="${SERVICES.trophy}/?username=${u}&theme=darkhub&no-frame=true&no-bg=true&row=1&column=6" width="100%" />\n\n</div>\n\n`;
   }
 
-  readme += `### 🔗 Links
+  readme += `## 🔗 Connect\n\n<div align="center">\n\n`;
+  readme += `[![GitHub](https://img.shields.io/badge/GitHub-0d1117?style=for-the-badge&logo=github&logoColor=c9d1d9)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-0d1117?style=for-the-badge&logo=twitter&logoColor=1da1f2)](https://twitter.com/${profile.twitter})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-0d1117?style=for-the-badge&logo=safari&logoColor=c9d1d9)](${profile.blog})`;
+  readme += `\n\n</div>\n\n`;
 
-[![GitHub](https://img.shields.io/badge/-${profile.username}-181717?style=flat-square&logo=github)](https://github.com/${profile.username})
-${profile.twitter ? `[![Twitter](https://img.shields.io/badge/-@${profile.twitter}-181717?style=flat-square&logo=twitter)](https://twitter.com/${profile.twitter})` : ''}
-${profile.blog ? `[![Website](https://img.shields.io/badge/-Website-181717?style=flat-square&logo=safari)](${profile.blog})` : ''}
-
----
-
-<div align="center">
-
-![Views](https://komarev.com/ghpvc/?username=${profile.username}&color=181717&style=flat-square&label=Profile+Views)
-
-</div>
-`;
+  readme += `---\n\n<div align="center">\n\n`;
+  readme += `![Visitors](https://komarev.com/ghpvc/?username=${u}&color=161b22&style=for-the-badge&label=VISITORS)\n\n`;
+  readme += `![Footer](${SERVICES.capsule}/api?type=waving&color=0:0d1117,50:161b22,100:0d1117&height=100&section=footer)\n\n</div>`;
 
   return readme;
 }
@@ -531,71 +459,53 @@ ${profile.blog ? `[![Website](https://img.shields.io/badge/-Website-181717?style
 // ==================== LIGHT THEME ====================
 function generateLightTheme(analysis: GitHubAnalysis, options: TemplateOptions): string {
   const { profile, topLanguages, totalStars } = analysis;
+  const u = profile.username;
+  const name = profile.name || u;
+
+  let readme = `<div align="center">\n\n`;
+  readme += `![Header](${SERVICES.capsule}/api?type=waving&color=0:e0e5ec,50:f0f5fa,100:ffffff&height=150&section=header&text=${safeUrlEncode('👋 ' + name)}&fontSize=40&fontColor=333&animation=fadeIn&fontAlignY=35)\n\n`;
   
-  let readme = `<div align="center">
+  readme += `### ${options.tagline || 'Software Developer'}\n\n`;
+  readme += `${options.bio || profile.bio || ''}\n\n`;
+  
+  // Social badges
+  readme += `[![GitHub](https://img.shields.io/github/followers/${u}?label=Follow&style=social)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/twitter/follow/${profile.twitter}?style=social)](https://twitter.com/${profile.twitter})`;
+  readme += `\n\n</div>\n\n`;
+  
+  readme += `---\n\n`;
 
-# 👋 Hello, I'm ${profile.name || profile.username}!
+  // About section with clean cards look
+  readme += `## ✨ About Me\n\n`;
+  readme += `- 📍 **Location:** ${profile.location || 'Planet Earth'}\n`;
+  readme += `- 🏢 **Organization:** ${profile.company || 'Open to opportunities'}\n`;
+  readme += `- 📦 **Repositories:** ${profile.publicRepos} public repos\n`;
+  readme += `- ⭐ **Stars:** ${totalStars} stars earned\n`;
+  readme += `- 👥 **Followers:** ${profile.followers}\n\n`;
 
-${options.bio || profile.bio || ''}
-
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-blue?style=social&logo=github)](https://github.com/${profile.username})
-${profile.twitter ? `[![Twitter](https://img.shields.io/twitter/follow/${profile.twitter}?style=social)](https://twitter.com/${profile.twitter})` : ''}
-
-</div>
-
----
-
-## 🌟 About Me
-
-- 📍 **Location:** ${profile.location || 'Somewhere on Earth'}
-- 🏢 **Company:** ${profile.company || 'Open to opportunities'}
-- 📚 **Repositories:** ${profile.publicRepos}
-- ⭐ **Stars Earned:** ${totalStars}
-
-## 🛠️ Technologies
-
-<p align="center">
-
-${topLanguages.map(lang => `<img src="https://img.shields.io/badge/-${encodeURIComponent(lang)}-f0f0f0?style=for-the-badge&logo=${techBadges[lang] || lang.toLowerCase()}&logoColor=333" />`).join('\n')}
-
-</p>
-
-`;
+  // Tech stack with soft colors
+  readme += `## 🛠️ Technologies\n\n<div align="center">\n\n`;
+  const lightColors = ['3498db', '2ecc71', '9b59b6', 'e74c3c', 'f39c12'];
+  readme += topLanguages.map((lang, i) => `![${lang}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-${lightColors[i % lightColors.length]}?style=for-the-badge&logo=${techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '')}&logoColor=white)`).join(' ') + '\n\n</div>\n\n';
 
   if (options.includeStats) {
-    readme += `## 📈 GitHub Stats
-
-<p align="center">
-  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=default&hide_border=true&bg_color=ffffff" alt="GitHub Stats" />
-</p>
-
-<p align="center">
-  <img src="${SERVICES.stats}/api/top-langs/?username=${profile.username}&layout=compact&theme=default&hide_border=true&bg_color=ffffff" alt="Top Languages" />
-</p>
-
-`;
+    readme += `## 📊 GitHub Stats\n\n<div align="center">\n\n`;
+    readme += `<img src="${SERVICES.stats}/api?username=${u}&show_icons=true&theme=default&hide_border=true&bg_color=ffffff&border_radius=10" height="170" />\n`;
+    readme += `<img src="${SERVICES.streak}/?user=${u}&theme=default&hide_border=true&background=ffffff&border_radius=10" height="170" />\n\n`;
+    readme += `<img src="${SERVICES.stats}/api/top-langs/?username=${u}&layout=compact&theme=default&hide_border=true&bg_color=ffffff&border_radius=10" />\n\n`;
+    readme += `<img src="${SERVICES.summary}/api/cards/profile-details?username=${u}&theme=default" width="100%" />\n\n</div>\n\n`;
   }
 
-  readme += `## 📫 Get in Touch
+  readme += `## 📫 Get in Touch\n\n<div align="center">\n\n`;
+  readme += `[![GitHub](https://img.shields.io/badge/GitHub-333?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
+  if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-4CAF50?style=for-the-badge&logo=safari&logoColor=white)](${profile.blog})`;
+  readme += `\n\n</div>\n\n`;
 
-<p align="center">
-
-[![Email](https://img.shields.io/badge/Email-Contact-blue?style=flat-square&logo=gmail)](mailto:)
-[![GitHub](https://img.shields.io/badge/GitHub-Profile-black?style=flat-square&logo=github)](https://github.com/${profile.username})
-${profile.blog ? `[![Website](https://img.shields.io/badge/Website-Visit-green?style=flat-square&logo=safari)](${profile.blog})` : ''}
-
-</p>
-
----
-
-<div align="center">
-
-*Thanks for stopping by!* 😊
-
-![Visitors](https://komarev.com/ghpvc/?username=${profile.username}&color=blue&style=flat-square)
-
-</div>
-`;
+  readme += `---\n\n<div align="center">\n\n`;
+  readme += `*Thanks for visiting!* ✨\n\n`;
+  readme += `![Visitors](https://komarev.com/ghpvc/?username=${u}&color=3498db&style=for-the-badge&label=VISITORS)\n\n`;
+  readme += `![Footer](${SERVICES.capsule}/api?type=waving&color=0:e0e5ec,50:f0f5fa,100:ffffff&height=80&section=footer)\n\n</div>`;
 
   return readme;
 }
