@@ -6,15 +6,60 @@ export interface PreviewOptions {
   font?: 'inter' | 'bitter' | 'raleway' | 'rokkitt' | 'source-code-pro' | 'koho';
 }
 
+export type SocialCardStyle = 'full' | 'compact' | 'minimal';
+
+interface ThemeConfig {
+  bg: string;
+  text: string;
+  statsTheme: string;
+  streakTheme: string;
+  trophyTheme: string;
+  capsuleGradient: string;
+  badgeColor: string;
+  badgeLabelColor: string;
+  badgeStyle: string;
+}
+
+const THEMES: Record<'dark' | 'light', ThemeConfig> = {
+  dark: {
+    bg: '0D1117',
+    text: 'ffffff',
+    statsTheme: 'github_dark',
+    streakTheme: 'dark',
+    trophyTheme: 'darkhub',
+    capsuleGradient: '0:0d1117,50:161b22,100:0d1117',
+    badgeColor: '0d1117',
+    badgeLabelColor: '161b22',
+    badgeStyle: 'for-the-badge',
+  },
+  light: {
+    bg: 'ffffff',
+    text: '333333',
+    statsTheme: 'default',
+    streakTheme: 'default',
+    trophyTheme: 'flat',
+    capsuleGradient: '0:ffffff,50:f0f0f0,100:ffffff',
+    badgeColor: 'f0f0f0',
+    badgeLabelColor: 'e0e0e0',
+    badgeStyle: 'for-the-badge',
+  },
+};
+
+/**
+ * Safely encode text for URLs
+ */
+function safeEncode(text: string): string {
+  return encodeURIComponent(text).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+}
+
 /**
  * Generate a social preview image URL using GitHub Socialify
  */
 export function generateSocialPreviewUrl(analysis: GitHubAnalysis, options: PreviewOptions = { theme: 'dark' }): string {
-  const { profile, topLanguages, totalStars } = analysis;
-  
-  // Use GitHub Socialify for generating social preview images
+  const { profile, topLanguages } = analysis;
+
   const params = new URLSearchParams({
-    description: `${topLanguages.slice(0, 3).join(' • ')} Developer`,
+    description: `${topLanguages.slice(0, 3).join(' \u00b7 ')} Developer`,
     font: options.font || 'source-code-pro',
     forks: '1',
     issues: '1',
@@ -24,7 +69,7 @@ export function generateSocialPreviewUrl(analysis: GitHubAnalysis, options: Prev
     pattern: options.pattern || 'circuit-board',
     pulls: '1',
     stargazers: '1',
-    theme: options.theme,
+    theme: options.theme === 'dark' ? 'Dark' : 'Light',
   });
 
   return `https://socialify.git.ci/${profile.username}/${profile.username}/image?${params.toString()}`;
@@ -35,19 +80,16 @@ export function generateSocialPreviewUrl(analysis: GitHubAnalysis, options: Prev
  */
 export function generateOgImageUrl(analysis: GitHubAnalysis, options: PreviewOptions = { theme: 'dark' }): string {
   const { profile, topLanguages } = analysis;
-  
-  const bgColor = options.theme === 'dark' ? '0D1117' : 'ffffff';
-  const textColor = options.theme === 'dark' ? 'fff' : '333';
-  
+  const t = THEMES[options.theme];
+
   const params = new URLSearchParams({
     type: 'waving',
-    color: 'gradient',
-    customColorList: '6,11,20',
+    color: t.capsuleGradient,
     height: '300',
     section: 'header',
     text: profile.name || profile.username,
     fontSize: '60',
-    fontColor: textColor,
+    fontColor: t.text,
     animation: 'twinkling',
     fontAlignY: '35',
     desc: topLanguages.slice(0, 3).join(' | '),
@@ -59,40 +101,189 @@ export function generateOgImageUrl(analysis: GitHubAnalysis, options: PreviewOpt
 }
 
 /**
- * Generate markdown for social sharing card
+ * Get all stats card URLs with consistent theming
  */
-export function generateSocialCard(analysis: GitHubAnalysis): string {
+export function getStatsCardUrls(username: string, theme: 'dark' | 'light' = 'dark'): Record<string, string> {
+  const t = THEMES[theme];
+
+  return {
+    stats: `https://github-readme-stats.vercel.app/api?username=${username}&show_icons=true&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}&rank_icon=github`,
+    languages: `https://github-readme-stats.vercel.app/api/top-langs/?username=${username}&layout=donut-vertical&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}&langs_count=8`,
+    streak: `https://github-readme-streak-stats.herokuapp.com/?user=${username}&theme=${t.streakTheme}&hide_border=true&background=${t.bg}`,
+    trophy: `https://github-profile-trophy.vercel.app/?username=${username}&theme=${t.trophyTheme}&no-frame=true&no-bg=true&row=1&column=7`,
+    activity: `https://github-readme-activity-graph.vercel.app/graph?username=${username}&theme=${theme === 'dark' ? 'github-compact' : 'minimal'}&hide_border=true&bg_color=${t.bg}&area=true`,
+    summary: `https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}`,
+    productive: `https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}&utcOffset=0`,
+    commits: `https://github-profile-summary-cards.vercel.app/api/cards/stats?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}`,
+  };
+}
+
+/**
+ * Generate a tech stack badge line
+ */
+function generateTechBadges(languages: string[], theme: 'dark' | 'light'): string {
+  const t = THEMES[theme];
+  const logoMap: Record<string, string> = {
+    JavaScript: 'javascript', TypeScript: 'typescript', Python: 'python',
+    Java: 'openjdk', 'C++': 'cplusplus', 'C#': 'csharp', Go: 'go',
+    Rust: 'rust', Ruby: 'ruby', PHP: 'php', Swift: 'swift',
+    Kotlin: 'kotlin', Dart: 'dart', Shell: 'gnubash', PowerShell: 'powershell',
+    HTML: 'html5', CSS: 'css3', Vue: 'vuedotjs', Lua: 'lua',
+  };
+
+  return languages.map(lang => {
+    const logo = logoMap[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return `![${lang}](https://img.shields.io/badge/${safeEncode(lang)}-${t.badgeColor}?style=${t.badgeStyle}&logo=${logo}&logoColor=white)`;
+  }).join(' ');
+}
+
+/**
+ * Generate full social card markdown — complete, ready-to-paste
+ */
+export function generateSocialCard(analysis: GitHubAnalysis, style: SocialCardStyle = 'full', theme: 'dark' | 'light' = 'dark'): string {
   const { profile, topLanguages, totalStars } = analysis;
-  
+  const t = THEMES[theme];
+  const u = profile.username;
+  const name = profile.name || profile.username;
+  const urls = getStatsCardUrls(u, theme);
+
+  if (style === 'minimal') {
+    return generateMinimalCard(u, name, totalStars, profile.followers, profile.publicRepos, topLanguages, t, urls);
+  }
+
+  if (style === 'compact') {
+    return generateCompactCard(u, name, totalStars, profile.followers, profile.publicRepos, topLanguages, t, urls);
+  }
+
+  return generateFullCard(u, name, profile, totalStars, topLanguages, analysis, t, urls, theme);
+}
+
+function generateMinimalCard(
+  u: string, name: string, stars: number, followers: number, repos: number,
+  langs: string[], t: ThemeConfig, urls: Record<string, string>
+): string {
   return `<div align="center">
 
-<!-- Social Preview Card -->
-<a href="https://github.com/${profile.username}">
-  <img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117" alt="${profile.username}'s GitHub Stats" />
+<a href="https://github.com/${u}">
+  <img src="${urls.stats}" alt="${u}'s Stats" width="420" />
 </a>
 
-<!-- Profile Badge -->
-<img src="https://img.shields.io/badge/Profile-${encodeURIComponent(profile.name || profile.username)}-blue?style=for-the-badge&logo=github" alt="Profile Badge" />
-
-<!-- Stats Badges -->
-<img src="https://img.shields.io/badge/Stars-${totalStars}-gold?style=for-the-badge&logo=star" alt="Stars" />
-<img src="https://img.shields.io/badge/Followers-${profile.followers}-blue?style=for-the-badge&logo=github" alt="Followers" />
-<img src="https://img.shields.io/badge/Repos-${profile.publicRepos}-green?style=for-the-badge&logo=github" alt="Repos" />
+${generateStatsBadges(name, stars, followers, repos, t)}
 
 </div>`;
 }
 
-/**
- * Generate PNG-friendly stats card URLs (can be downloaded/screenshotted)
- */
-export function getStatsCardUrls(username: string, theme: 'dark' | 'light' = 'dark'): Record<string, string> {
-  const statsTheme = theme === 'dark' ? 'radical' : 'default';
-  const bgColor = theme === 'dark' ? '0D1117' : 'ffffff';
-  
-  return {
-    stats: `https://github-readme-stats.vercel.app/api?username=${username}&show_icons=true&theme=${statsTheme}&hide_border=true&bg_color=${bgColor}`,
-    languages: `https://github-readme-stats.vercel.app/api/top-langs/?username=${username}&layout=compact&theme=${statsTheme}&hide_border=true&bg_color=${bgColor}`,
-    streak: `https://github-readme-streak-stats.herokuapp.com/?user=${username}&theme=${statsTheme}&hide_border=true&background=${bgColor}`,
-    trophy: `https://github-profile-trophy.vercel.app/?username=${username}&theme=${theme === 'dark' ? 'darkhub' : 'flat'}&no-frame=true&row=1&column=7`,
-  };
+function generateCompactCard(
+  u: string, name: string, stars: number, followers: number, repos: number,
+  langs: string[], t: ThemeConfig, urls: Record<string, string>
+): string {
+  return `<div align="center">
+
+<!-- Header -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=120&section=header&text=${safeEncode(name)}&fontColor=${t.text}&fontSize=36&animation=fadeIn&fontAlignY=50" width="100%" />
+
+<!-- Stats -->
+<a href="https://github.com/${u}">
+  <img src="${urls.stats}" alt="Stats" width="49%" />
+  <img src="${urls.streak}" alt="Streak" width="49%" />
+</a>
+
+<br><br>
+
+<!-- Tech -->
+${generateTechBadges(langs, t.badgeColor === '0d1117' ? 'dark' : 'light')}
+
+<br><br>
+
+${generateStatsBadges(name, stars, followers, repos, t)}
+
+<!-- Footer -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=80&section=footer" width="100%" />
+
+</div>`;
+}
+
+function generateFullCard(
+  u: string, name: string,
+  profile: GitHubAnalysis['profile'], stars: number, langs: string[],
+  analysis: GitHubAnalysis, t: ThemeConfig, urls: Record<string, string>,
+  theme: 'dark' | 'light'
+): string {
+  const topRepos = analysis.repositories
+    .filter(r => !r.isForked && !r.isPrivate)
+    .sort((a, b) => b.stars - a.stars)
+    .slice(0, 3);
+
+  const repoCards = topRepos.map(r =>
+    `<a href="${r.url}"><img src="https://github-readme-stats.vercel.app/api/pin/?username=${u}&repo=${safeEncode(r.name)}&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}" alt="${r.name}" /></a>`
+  ).join('\n');
+
+  return `<div align="center">
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=180&section=header&text=${safeEncode(name)}&fontColor=${t.text}&fontSize=42&animation=twinkling&fontAlignY=35&desc=${safeEncode(langs.slice(0, 3).join(' \u00b7 '))}&descAlignY=55&descSize=18" width="100%" />
+
+<!-- ═══════════════════ BADGES ═══════════════════ -->
+
+${generateStatsBadges(name, stars, profile.followers, profile.publicRepos, t)}
+
+<br>
+
+${generateTechBadges(langs, theme)}
+
+<br>
+
+<!-- ═══════════════════ STATS ═══════════════════ -->
+
+<img src="${urls.stats}" alt="Stats" width="49%" />
+<img src="${urls.streak}" alt="Streak" width="49%" />
+
+<br>
+
+<img src="${urls.languages}" alt="Languages" width="30%" />
+<img src="${urls.productive}" alt="Productive Time" width="49%" />
+
+<!-- ═════════════════ TROPHIES ═════════════════ -->
+
+<br>
+
+<img src="${urls.trophy}" alt="Trophies" width="100%" />
+
+<!-- ═════════════════ ACTIVITY ═════════════════ -->
+
+<br>
+
+<img src="${urls.activity}" alt="Activity Graph" width="100%" />
+
+<!-- ══════════════ TOP REPOSITORIES ═════════════ -->
+
+${repoCards ? `<br>\n\n${repoCards}` : ''}
+
+<!-- ══════════════════ PROFILE ═════════════════ -->
+
+<br>
+
+<img src="${urls.summary}" alt="Profile Summary" width="100%" />
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+
+<br>
+
+![Views](https://komarev.com/ghpvc/?username=${u}&color=${t.badgeLabelColor}&style=for-the-badge&label=PROFILE+VIEWS)
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=120&section=footer" width="100%" />
+
+</div>`;
+}
+
+function generateStatsBadges(
+  name: string, stars: number, followers: number, repos: number, t: ThemeConfig
+): string {
+  return [
+    `<img src="https://img.shields.io/badge/${safeEncode(name)}-${t.badgeColor}?style=${t.badgeStyle}&logo=github&logoColor=white" alt="Profile" />`,
+    `<img src="https://img.shields.io/badge/Stars-${stars}-${t.badgeColor}?style=${t.badgeStyle}&logo=github&logoColor=ffd700&labelColor=${t.badgeLabelColor}" alt="Stars" />`,
+    `<img src="https://img.shields.io/badge/Followers-${followers}-${t.badgeColor}?style=${t.badgeStyle}&logo=github&logoColor=58a6ff&labelColor=${t.badgeLabelColor}" alt="Followers" />`,
+    `<img src="https://img.shields.io/badge/Repos-${repos}-${t.badgeColor}?style=${t.badgeStyle}&logo=github&logoColor=3fb950&labelColor=${t.badgeLabelColor}" alt="Repos" />`,
+  ].join('\n');
 }

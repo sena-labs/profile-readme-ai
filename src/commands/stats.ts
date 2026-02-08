@@ -53,6 +53,8 @@ export async function stats(options: StatsOptions): Promise<void> {
         followers: analysis.profile.followers,
         following: analysis.profile.following,
         publicRepos: analysis.profile.publicRepos,
+        privateRepos: analysis.privateRepoCount,
+        includesPrivateRepos: analysis.includesPrivateRepos,
         totalStars: analysis.totalStars,
         topLanguages: analysis.topLanguages,
         pinnedRepos: analysis.pinnedRepos,
@@ -88,6 +90,10 @@ export async function stats(options: StatsOptions): Promise<void> {
     // Repository stats
     console.log(chalk.bold('\n📦 Repositories\n'));
     console.log(`  Public repos: ${chalk.green(profile.publicRepos)}`);
+    if (analysis.includesPrivateRepos) {
+      console.log(`  Private repos:${chalk.magenta(' ' + analysis.privateRepoCount + ' 🔒')}`);
+      console.log(`  Total repos:  ${chalk.bold(repositories.length)}`);
+    }
     console.log(`  Total stars:  ${chalk.yellow(totalStars + ' ⭐')}`);
     console.log(`  Avg stars:    ${chalk.gray((totalStars / Math.max(profile.publicRepos, 1)).toFixed(1))}`);
     
@@ -96,8 +102,8 @@ export async function stats(options: StatsOptions): Promise<void> {
     console.log(`  Original:     ${chalk.cyan(originalRepos)}`);
     console.log(`  Forked:       ${chalk.gray(forkedRepos)}`);
 
-    // Languages
-    console.log(chalk.bold('\n💻 Top Languages\n'));
+    // Languages (include private repos in language stats)
+    console.log(chalk.bold(`\n💻 Top Languages${analysis.includesPrivateRepos ? ' (incl. private)' : ''}\n`));
     if (topLanguages.length > 0) {
       const langCounts = new Map<string, number>();
       repositories.forEach(r => {
@@ -127,7 +133,8 @@ export async function stats(options: StatsOptions): Promise<void> {
       topRepos.forEach((repo, i) => {
         const stars = repo.stars > 0 ? chalk.yellow(`★${repo.stars}`) : chalk.gray('★0');
         const lang = repo.language ? chalk.cyan(`[${repo.language}]`) : '';
-        console.log(`  ${(i + 1).toString().padStart(2)}. ${chalk.bold(repo.name)} ${stars} ${lang}`);
+        const priv = repo.isPrivate ? chalk.magenta(' 🔒') : '';
+        console.log(`  ${(i + 1).toString().padStart(2)}. ${chalk.bold(repo.name)} ${stars} ${lang}${priv}`);
         if (repo.description) {
           console.log(chalk.gray(`      ${repo.description.slice(0, 60)}${repo.description.length > 60 ? '...' : ''}`));
         }

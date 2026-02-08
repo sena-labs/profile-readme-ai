@@ -13,6 +13,8 @@ Location: ${analysis.profile.location || 'Not specified'}
 Company: ${analysis.profile.company || 'Not specified'}
 Top programming languages: ${analysis.topLanguages.join(', ')}
 Number of public repositories: ${analysis.profile.publicRepos}
+${analysis.includesPrivateRepos ? `Number of private repositories: ${analysis.privateRepoCount}` : ''}
+Total repositories analyzed: ${analysis.repositories.length}
 Total stars received: ${analysis.totalStars}
 Notable repositories: ${analysis.pinnedRepos.slice(0, 3).join(', ')}
 

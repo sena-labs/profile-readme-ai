@@ -56,11 +56,11 @@ export async function deepAnalyzeRepos(
   const octokit = getOctokitClient(token);
   const { profile, repositories } = analysis;
   
-  // Get top 5 non-forked repos by stars
+  // Get top repos for analysis — include private repos for better AI context
   const topRepos = repositories
     .filter(r => !r.isForked)
     .sort((a, b) => b.stars - a.stars)
-    .slice(0, 5);
+    .slice(0, 8);
 
   // Fetch READMEs in parallel with concurrency limit of 3
   const CONCURRENCY = 3;
@@ -116,6 +116,8 @@ export async function generateEnhancedBio(
 - Company: ${analysis.profile.company || 'Not specified'}
 - Top languages: ${analysis.topLanguages.join(', ')}
 - Total stars: ${analysis.totalStars}
+- Public repos: ${analysis.profile.publicRepos}
+${analysis.includesPrivateRepos ? `- Private repos: ${analysis.privateRepoCount} (included in analysis)` : ''}
 - Followers: ${analysis.profile.followers}
 
 ## Top Repositories (with README excerpts)
@@ -159,6 +161,8 @@ export async function generateMultiLanguageBio(
 - Current bio: ${analysis.profile.bio || 'None'}
 - Top languages: ${analysis.topLanguages.join(', ')}
 - Total stars: ${analysis.totalStars}
+- Public repos: ${analysis.profile.publicRepos}
+${analysis.includesPrivateRepos ? `- Private repos: ${analysis.privateRepoCount}` : ''}
 - Location: ${analysis.profile.location || 'Not specified'}
 
 Generate a 2-3 sentence professional bio in each of these languages: ${languages.map(l => LANGUAGE_NAMES[l]).join(', ')}
@@ -245,6 +249,7 @@ export async function suggestImprovements(
 - Website/Blog: ${analysis.profile.blog || 'NOT SET'}
 - Twitter: ${analysis.profile.twitter || 'NOT SET'}
 - Public Repos: ${analysis.profile.publicRepos}
+${analysis.includesPrivateRepos ? `- Private Repos: ${analysis.privateRepoCount}` : ''}
 - Followers: ${analysis.profile.followers}
 - Following: ${analysis.profile.following}
 - Total Stars: ${analysis.totalStars}

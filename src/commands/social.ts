@@ -3,12 +3,14 @@ import ora from 'ora';
 import inquirer from 'inquirer';
 import fs from 'fs/promises';
 import { analyzeGitHubProfile, isValidUsername } from '../services/github.js';
-import { generateOgImageUrl, generateSocialCard, getStatsCardUrls } from '../services/preview.js';
+import { generateOgImageUrl, generateSocialCard, getStatsCardUrls, type SocialCardStyle } from '../services/preview.js';
 import { getGitHubToken } from '../utils/config.js';
 
 interface SocialOptions {
   username?: string;
   theme: 'dark' | 'light';
+  style?: SocialCardStyle;
+  output?: string;
 }
 
 export async function social(options: SocialOptions): Promise<void> {
@@ -34,12 +36,29 @@ export async function social(options: SocialOptions): Promise<void> {
       return;
     }
 
-    // At this point username is guaranteed to be a valid string
     const validUsername = username as string;
+
+    // Select card style
+    let style: SocialCardStyle = options.style || 'full';
+    if (!options.style) {
+      const { selectedStyle } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'selectedStyle',
+          message: 'Card style:',
+          choices: [
+            { name: 'Full    ─ Header, stats, streak, languages, trophies, activity graph, top repos, summary', value: 'full' },
+            { name: 'Compact ─ Header, stats + streak side-by-side, tech badges, footer', value: 'compact' },
+            { name: 'Minimal ─ Stats card + badges only', value: 'minimal' },
+          ],
+          default: 'full',
+        },
+      ]);
+      style = selectedStyle;
+    }
 
     // Analyze profile
     const spinner = ora('Analyzing GitHub profile...').start();
-    
     const githubToken = getGitHubToken();
     const analysis = await analyzeGitHubProfile(validUsername, githubToken);
     spinner.succeed('Profile analyzed');
@@ -47,63 +66,54 @@ export async function social(options: SocialOptions): Promise<void> {
     // Generate URLs
     const previewUrl = generateOgImageUrl(analysis, { theme: options.theme });
     const statsUrls = getStatsCardUrls(validUsername, options.theme);
-    const socialCard = generateSocialCard(analysis);
 
+    // Display available image URLs
     console.log(chalk.bold('\n🖼️  Social Preview Images\n'));
-    
-    console.log(chalk.cyan('Header Banner:'));
-    console.log(chalk.gray(previewUrl));
-    console.log();
 
-    console.log(chalk.cyan('Stats Card:'));
-    console.log(chalk.gray(statsUrls.stats));
-    console.log();
+    const urlEntries = [
+      ['Header Banner', previewUrl],
+      ['Stats Card', statsUrls.stats],
+      ['Languages', statsUrls.languages],
+      ['Streak', statsUrls.streak],
+      ['Trophies', statsUrls.trophy],
+      ['Activity Graph', statsUrls.activity],
+      ['Profile Summary', statsUrls.summary],
+      ['Productive Time', statsUrls.productive],
+    ];
 
-    console.log(chalk.cyan('Languages Card:'));
-    console.log(chalk.gray(statsUrls.languages));
-    console.log();
+    for (const [label, url] of urlEntries) {
+      console.log(`  ${chalk.cyan(label.padEnd(18))} ${chalk.gray(url)}`);
+    }
 
-    console.log(chalk.cyan('Streak Card:'));
-    console.log(chalk.gray(statsUrls.streak));
-    console.log();
+    // Generate social card markdown
+    const socialCard = generateSocialCard(analysis, style, options.theme);
 
-    console.log(chalk.cyan('Trophy Card:'));
-    console.log(chalk.gray(statsUrls.trophy));
-    console.log();
+    console.log(chalk.bold(`\n📄 Generated ${chalk.cyan(style)} card (${options.theme} theme)\n`));
 
-    // Ask to save social card markdown
-    const { saveSocialCard } = await inquirer.prompt([
+    // Save
+    const outputPath = options.output || './social-card.md';
+    const { save } = await inquirer.prompt([
       {
         type: 'confirm',
-        name: 'saveSocialCard',
-        message: 'Save social sharing card markdown to file?',
+        name: 'save',
+        message: `Save to ${outputPath}?`,
         default: true,
       },
     ]);
 
-    if (saveSocialCard) {
-      const { outputPath } = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'outputPath',
-          message: 'Output file path:',
-          default: './social-card.md',
-        },
-      ]);
-
+    if (save) {
       await fs.writeFile(outputPath, socialCard, 'utf-8');
       console.log(chalk.green(`\n✅ Social card saved to ${outputPath}`));
     }
 
     console.log(chalk.bold('\n💡 Tips:'));
-    console.log('  • Right-click any URL above and "Save image as..." to download PNG');
-    console.log('  • Use the header banner as your Twitter/LinkedIn cover');
-    console.log('  • Add the social card to your README for sharing');
+    console.log('  • Paste the markdown directly into your profile README');
+    console.log('  • Use the header banner URL as your Twitter/LinkedIn cover');
+    console.log('  • All images are served live — stats update automatically');
     console.log();
 
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    // Sanitize error message to not expose system paths
     const sanitizedMessage = message.replace(/[A-Z]:\\[^\s]+/gi, '[path]').replace(/\/[^\s]+\/[^\s]+/g, '[path]');
     console.error(chalk.red(`Error: ${sanitizedMessage}`));
     process.exit(1);

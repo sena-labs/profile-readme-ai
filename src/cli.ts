@@ -96,6 +96,8 @@ program
   .description('Generate social preview images and sharing cards')
   .option('-u, --username <username>', 'GitHub username')
   .option('-t, --theme <theme>', 'Color theme: dark, light', 'dark')
+  .option('--style <style>', 'Card style: full, compact, minimal')
+  .option('-o, --output <path>', 'Output file path', './social-card.md')
   .action(social);
 
 program

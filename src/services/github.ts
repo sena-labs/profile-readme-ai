@@ -37,6 +37,7 @@ export interface Repository {
   url: string;
   topics: string[];
   isForked: boolean;
+  isPrivate: boolean;
 }
 
 export interface GitHubAnalysis {
@@ -46,6 +47,8 @@ export interface GitHubAnalysis {
   topLanguages: string[];
   totalStars: number;
   pinnedRepos: string[];
+  privateRepoCount: number;
+  includesPrivateRepos: boolean;
 }
 
 export async function analyzeGitHubProfile(username: string, token?: string): Promise<GitHubAnalysis> {
@@ -78,14 +81,45 @@ export async function analyzeGitHubProfile(username: string, token?: string): Pr
       createdAt: user.created_at,
     };
 
-    // Fetch repositories
-    const { data: repos } = await octokit.rest.repos.listForUser({
-      username,
-      sort: 'updated',
-      per_page: 100,
-    });
+    // Determine if we can fetch private repos (authenticated user matches requested username)
+    let includesPrivateRepos = false;
+    let allRepos: any[] = [];
 
-    const repositories: Repository[] = repos.map(repo => ({
+    if (token) {
+      try {
+        const { data: authUser } = await octokit.rest.users.getAuthenticated();
+        if (authUser.login.toLowerCase() === username.toLowerCase()) {
+          // Authenticated user matches — fetch ALL repos including private
+          includesPrivateRepos = true;
+          let page = 1;
+          while (true) {
+            const { data: pageRepos } = await octokit.rest.repos.listForAuthenticatedUser({
+              visibility: 'all',
+              sort: 'updated',
+              per_page: 100,
+              page,
+            });
+            allRepos.push(...pageRepos);
+            if (pageRepos.length < 100) break;
+            page++;
+          }
+        }
+      } catch {
+        // Token invalid or insufficient permissions — fall through to public fetch
+      }
+    }
+
+    if (allRepos.length === 0) {
+      // Fallback: fetch public repos only
+      const { data: repos } = await octokit.rest.repos.listForUser({
+        username,
+        sort: 'updated',
+        per_page: 100,
+      });
+      allRepos = repos;
+    }
+
+    const repositories: Repository[] = allRepos.map((repo: any) => ({
       name: repo.name,
       description: repo.description,
       language: repo.language ?? null,
@@ -94,6 +128,7 @@ export async function analyzeGitHubProfile(username: string, token?: string): Pr
       url: repo.html_url,
       topics: repo.topics || [],
       isForked: repo.fork,
+      isPrivate: repo.private || false,
     }));
 
     // Analyze languages
@@ -113,12 +148,14 @@ export async function analyzeGitHubProfile(username: string, token?: string): Pr
       .slice(0, 5)
       .map(([lang]) => lang);
 
-    // Get pinned repos (top starred non-forked)
+    // Get pinned repos (top starred non-forked, PUBLIC only — safe for README display)
     const pinnedRepos = repositories
-      .filter(r => !r.isForked)
+      .filter(r => !r.isForked && !r.isPrivate)
       .sort((a, b) => b.stars - a.stars)
       .slice(0, 6)
       .map(r => r.name);
+
+    const privateRepoCount = repositories.filter(r => r.isPrivate).length;
 
     return {
       profile,
@@ -127,6 +164,8 @@ export async function analyzeGitHubProfile(username: string, token?: string): Pr
       topLanguages,
       totalStars,
       pinnedRepos,
+      privateRepoCount,
+      includesPrivateRepos,
     };
   });
 }
