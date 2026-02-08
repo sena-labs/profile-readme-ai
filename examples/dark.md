@@ -2,7 +2,7 @@
 
 # Ivan Sena
 
-![Dark Banner](https://capsule-render.vercel.app/api?type=rect&color=0D1117&height=1)
+![Dark Banner](${SERVICES.capsule}/api?type=rect&color=0D1117&height=1)
 
 *Building in the shadows*
 
@@ -29,8 +29,8 @@
 ### 📊 Stats
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=dark&hide_border=true&bg_color=0D1117&title_color=ffffff&text_color=9f9f9f&icon_color=ffffff" width="49%" />
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=sena-labs&theme=dark&hide_border=true&background=0D1117&stroke=ffffff&ring=ffffff&fire=ffffff&currStreakLabel=ffffff" width="49%" />
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=dark&hide_border=true&bg_color=0D1117&title_color=ffffff&text_color=9f9f9f&icon_color=ffffff" width="49%" />
+  <img src="${SERVICES.streak}/?user=sena-labs&theme=dark&hide_border=true&background=0D1117&stroke=ffffff&ring=ffffff&fire=ffffff&currStreakLabel=ffffff" width="49%" />
 </p>
 
 ### 🔗 Links

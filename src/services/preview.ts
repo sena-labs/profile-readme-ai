@@ -45,6 +45,22 @@ const THEMES: Record<'dark' | 'light', ThemeConfig> = {
   },
 };
 
+// Service URLs — using reliable mirrors since the main instances often hit rate limits
+const SERVICES = {
+  // Mirror of github-readme-stats (main instance often unavailable due to rate limits)
+  stats: 'https://github-readme-stats-sigma-five.vercel.app',
+  // Streak stats — herokuapp instance is stable
+  streak: 'https://github-readme-streak-stats.herokuapp.com',
+  // Trophy — using a known working mirror
+  trophy: 'https://github-profile-trophy.vercel.app',
+  // Activity graph
+  activity: 'https://github-readme-activity-graph.vercel.app',
+  // Summary cards
+  summary: 'https://github-profile-summary-cards.vercel.app',
+  // Capsule render
+  capsule: 'https://capsule-render.vercel.app',
+};
+
 /**
  * Safely encode text for URLs
  */
@@ -97,7 +113,7 @@ export function generateOgImageUrl(analysis: GitHubAnalysis, options: PreviewOpt
     descSize: '20',
   });
 
-  return `https://capsule-render.vercel.app/api?${params.toString()}`;
+  return `${SERVICES.capsule}/api?${params.toString()}`;
 }
 
 /**
@@ -107,14 +123,14 @@ export function getStatsCardUrls(username: string, theme: 'dark' | 'light' = 'da
   const t = THEMES[theme];
 
   return {
-    stats: `https://github-readme-stats.vercel.app/api?username=${username}&show_icons=true&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}&rank_icon=github`,
-    languages: `https://github-readme-stats.vercel.app/api/top-langs/?username=${username}&layout=donut-vertical&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}&langs_count=8`,
-    streak: `https://github-readme-streak-stats.herokuapp.com/?user=${username}&theme=${t.streakTheme}&hide_border=true&background=${t.bg}`,
-    trophy: `https://github-profile-trophy.vercel.app/?username=${username}&theme=${t.trophyTheme}&no-frame=true&no-bg=true&row=1&column=7`,
-    activity: `https://github-readme-activity-graph.vercel.app/graph?username=${username}&theme=${theme === 'dark' ? 'github-compact' : 'minimal'}&hide_border=true&bg_color=${t.bg}&area=true`,
-    summary: `https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}`,
-    productive: `https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}&utcOffset=0`,
-    commits: `https://github-profile-summary-cards.vercel.app/api/cards/stats?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}`,
+    stats: `${SERVICES.stats}/api?username=${username}&show_icons=true&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}&rank_icon=github`,
+    languages: `${SERVICES.stats}/api/top-langs/?username=${username}&layout=donut-vertical&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}&langs_count=8`,
+    streak: `${SERVICES.streak}/?user=${username}&theme=${t.streakTheme}&hide_border=true&background=${t.bg}`,
+    trophy: `${SERVICES.trophy}/?username=${username}&theme=${t.trophyTheme}&no-frame=true&no-bg=true&row=1&column=7`,
+    activity: `${SERVICES.activity}/graph?username=${username}&theme=${theme === 'dark' ? 'github-compact' : 'minimal'}&hide_border=true&bg_color=${t.bg}&area=true`,
+    summary: `${SERVICES.summary}/api/cards/profile-details?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}`,
+    productive: `${SERVICES.summary}/api/cards/productive-time?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}&utcOffset=0`,
+    commits: `${SERVICES.summary}/api/cards/stats?username=${username}&theme=${theme === 'dark' ? 'github_dark' : 'default'}`,
   };
 }
 
@@ -180,7 +196,7 @@ function generateCompactCard(
   return `<div align="center">
 
 <!-- Header -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=120&section=header&text=${safeEncode(name)}&fontColor=${t.text}&fontSize=36&animation=fadeIn&fontAlignY=50" width="100%" />
+<img src="${SERVICES.capsule}/api?type=waving&color=${t.capsuleGradient}&height=120&section=header&text=${safeEncode(name)}&fontColor=${t.text}&fontSize=36&animation=fadeIn&fontAlignY=50" width="100%" />
 
 <!-- Stats -->
 <a href="https://github.com/${u}">
@@ -198,7 +214,7 @@ ${generateTechBadges(langs, t.badgeColor === '0d1117' ? 'dark' : 'light')}
 ${generateStatsBadges(name, stars, followers, repos, t)}
 
 <!-- Footer -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=80&section=footer" width="100%" />
+<img src="${SERVICES.capsule}/api?type=waving&color=${t.capsuleGradient}&height=80&section=footer" width="100%" />
 
 </div>`;
 }
@@ -215,14 +231,14 @@ function generateFullCard(
     .slice(0, 3);
 
   const repoCards = topRepos.map(r =>
-    `<a href="${r.url}"><img src="https://github-readme-stats.vercel.app/api/pin/?username=${u}&repo=${safeEncode(r.name)}&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}" alt="${r.name}" /></a>`
+    `<a href="${r.url}"><img src="${SERVICES.stats}/api/pin/?username=${u}&repo=${safeEncode(r.name)}&theme=${t.statsTheme}&hide_border=true&bg_color=${t.bg}" alt="${r.name}" /></a>`
   ).join('\n');
 
   return `<div align="center">
 
 <!-- ═══════════════════════ HEADER ═══════════════════════ -->
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=180&section=header&text=${safeEncode(name)}&fontColor=${t.text}&fontSize=42&animation=twinkling&fontAlignY=35&desc=${safeEncode(langs.slice(0, 3).join(' \u00b7 '))}&descAlignY=55&descSize=18" width="100%" />
+<img src="${SERVICES.capsule}/api?type=waving&color=${t.capsuleGradient}&height=180&section=header&text=${safeEncode(name)}&fontColor=${t.text}&fontSize=42&animation=twinkling&fontAlignY=35&desc=${safeEncode(langs.slice(0, 3).join(' \u00b7 '))}&descAlignY=55&descSize=18" width="100%" />
 
 <!-- ═══════════════════ BADGES ═══════════════════ -->
 
@@ -272,7 +288,7 @@ ${repoCards ? `<br>\n\n${repoCards}` : ''}
 
 ![Views](https://komarev.com/ghpvc/?username=${u}&color=${t.badgeLabelColor}&style=for-the-badge&label=PROFILE+VIEWS)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=${t.capsuleGradient}&height=120&section=footer" width="100%" />
+<img src="${SERVICES.capsule}/api?type=waving&color=${t.capsuleGradient}&height=120&section=footer" width="100%" />
 
 </div>`;
 }

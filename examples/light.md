@@ -30,11 +30,11 @@
 ## 📈 GitHub Stats
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=default&hide_border=true&bg_color=ffffff" alt="GitHub Stats" />
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=default&hide_border=true&bg_color=ffffff" alt="GitHub Stats" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=sena-labs&layout=compact&theme=default&hide_border=true&bg_color=ffffff" alt="Top Languages" />
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=sena-labs&layout=compact&theme=default&hide_border=true&bg_color=ffffff" alt="Top Languages" />
 </p>
 
 ## 📫 Get in Touch

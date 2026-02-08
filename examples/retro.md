@@ -34,7 +34,7 @@
 ## 📊 ACHIEVEMENTS
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=gruvbox&hide_border=true" alt="Stats" />
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=gruvbox&hide_border=true" alt="Stats" />
 </p>
 
 ## 🔗 LINKS

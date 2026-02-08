@@ -7,6 +7,13 @@ export interface TemplateOptions {
   includeStats: boolean;
 }
 
+// Service URLs — using reliable mirrors to avoid rate limit issues on the main instances
+const SERVICES = {
+  stats: 'https://github-readme-stats-sigma-five.vercel.app',
+  streak: '${SERVICES.streak}',
+  capsule: '${SERVICES.capsule}',
+};
+
 const techBadges: Record<string, string> = {
   JavaScript: 'javascript',
   TypeScript: 'typescript',
@@ -100,10 +107,10 @@ ${options.bio || profile.bio || ''}
   if (options.includeStats) {
     readme += `## 📊 GitHub Stats\n\n`;
     readme += `<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=default&hide_border=true" alt="GitHub Stats" />
+  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=default&hide_border=true" alt="GitHub Stats" />
 </p>\n\n`;
     readme += `<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${profile.username}&layout=compact&theme=default&hide_border=true" alt="Top Languages" />
+  <img src="${SERVICES.stats}/api/top-langs/?username=${profile.username}&layout=compact&theme=default&hide_border=true" alt="Top Languages" />
 </p>\n\n`;
   }
 
@@ -160,11 +167,11 @@ ${topLanguages.map(lang => `drwxr-xr-x  ${lang}`).join('\n')}
     readme += `## > git log --oneline
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=dark&hide_border=true&bg_color=0d1117" alt="Stats" />
+  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=dark&hide_border=true&bg_color=0d1117" alt="Stats" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=${profile.username}&theme=dark&hide_border=true&background=0d1117" alt="Streak" />
+  <img src="${SERVICES.streak}/?user=${profile.username}&theme=dark&hide_border=true&background=0d1117" alt="Streak" />
 </p>
 
 `;
@@ -224,9 +231,9 @@ ${topLanguages.map(lang => getTechBadge(lang)).join(' ')}
 
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=radical&hide_border=true" alt="GitHub Stats" />
+<img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=radical&hide_border=true" alt="GitHub Stats" />
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=${profile.username}&theme=radical&hide_border=true" alt="GitHub Streak" />
+<img src="${SERVICES.streak}/?user=${profile.username}&theme=radical&hide_border=true" alt="GitHub Streak" />
 
 </div>
 
@@ -288,7 +295,7 @@ ${topLanguages.map(lang => `- ${lang}`).join('\n')}
     readme += `## GitHub Analytics
 
 <p>
-  <img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=graywhite&hide_border=true" alt="GitHub Statistics" />
+  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=graywhite&hide_border=true" alt="GitHub Statistics" />
 </p>
 
 `;
@@ -358,7 +365,7 @@ ${pixelArt}
     readme += `## 📊 ACHIEVEMENTS
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=gruvbox&hide_border=true" alt="Stats" />
+  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=gruvbox&hide_border=true" alt="Stats" />
 </p>
 
 `;
@@ -392,7 +399,7 @@ function generateNeonTheme(analysis: GitHubAnalysis, options: TemplateOptions): 
   
   let readme = `<div align="center">
 
-![Header](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=${encodeURIComponent(profile.name || profile.username)}&fontSize=80&fontColor=fff&animation=twinkling&fontAlignY=35)
+![Header](${SERVICES.capsule}/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=${encodeURIComponent(profile.name || profile.username)}&fontSize=80&fontColor=fff&animation=twinkling&fontAlignY=35)
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Orbitron&size=25&pause=1000&color=00F7FF&center=true&vCenter=true&width=600&lines=${encodeURIComponent(options.tagline || 'Welcome to my neon world!')})](https://git.io/typing-svg)
 
@@ -400,7 +407,7 @@ function generateNeonTheme(analysis: GitHubAnalysis, options: TemplateOptions): 
 
 ---
 
-<img align="right" width="400" src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117" />
+<img align="right" width="400" src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117" />
 
 ## ⚡ ABOUT ME
 
@@ -431,9 +438,9 @@ ${topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/${encodeURIC
 
 <div align="center">
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=${profile.username}&theme=tokyonight&hide_border=true&background=0D1117" alt="Streak" />
+<img src="${SERVICES.streak}/?user=${profile.username}&theme=tokyonight&hide_border=true&background=0D1117" alt="Streak" />
 
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${profile.username}&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117" alt="Languages" />
+<img src="${SERVICES.stats}/api/top-langs/?username=${profile.username}&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117" alt="Languages" />
 
 </div>
 
@@ -452,7 +459,7 @@ ${profile.blog ? `[![Website](https://img.shields.io/badge/Website-0D1117?style=
 
 ---
 
-![Footer](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer)
+![Footer](${SERVICES.capsule}/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer)
 `;
 
   return readme;
@@ -466,7 +473,7 @@ function generateDarkTheme(analysis: GitHubAnalysis, options: TemplateOptions): 
 
 # ${profile.name || profile.username}
 
-![Dark Banner](https://capsule-render.vercel.app/api?type=rect&color=0D1117&height=1)
+![Dark Banner](${SERVICES.capsule}/api?type=rect&color=0D1117&height=1)
 
 *${options.bio || profile.bio || 'Building in the shadows'}*
 
@@ -496,8 +503,8 @@ ${topLanguages.map(lang => `![${lang}](https://img.shields.io/badge/-${encodeURI
     readme += `### 📊 Stats
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=dark&hide_border=true&bg_color=0D1117&title_color=ffffff&text_color=9f9f9f&icon_color=ffffff" width="49%" />
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=${profile.username}&theme=dark&hide_border=true&background=0D1117&stroke=ffffff&ring=ffffff&fire=ffffff&currStreakLabel=ffffff" width="49%" />
+  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=dark&hide_border=true&bg_color=0D1117&title_color=ffffff&text_color=9f9f9f&icon_color=ffffff" width="49%" />
+  <img src="${SERVICES.streak}/?user=${profile.username}&theme=dark&hide_border=true&background=0D1117&stroke=ffffff&ring=ffffff&fire=ffffff&currStreakLabel=ffffff" width="49%" />
 </p>
 
 `;
@@ -559,11 +566,11 @@ ${topLanguages.map(lang => `<img src="https://img.shields.io/badge/-${encodeURIC
     readme += `## 📈 GitHub Stats
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=${profile.username}&show_icons=true&theme=default&hide_border=true&bg_color=ffffff" alt="GitHub Stats" />
+  <img src="${SERVICES.stats}/api?username=${profile.username}&show_icons=true&theme=default&hide_border=true&bg_color=ffffff" alt="GitHub Stats" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${profile.username}&layout=compact&theme=default&hide_border=true&bg_color=ffffff" alt="Top Languages" />
+  <img src="${SERVICES.stats}/api/top-langs/?username=${profile.username}&layout=compact&theme=default&hide_border=true&bg_color=ffffff" alt="Top Languages" />
 </p>
 
 `;

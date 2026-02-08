@@ -28,9 +28,9 @@
 
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=radical&hide_border=true" alt="GitHub Stats" />
+<img src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=radical&hide_border=true" alt="GitHub Stats" />
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=sena-labs&theme=radical&hide_border=true" alt="GitHub Streak" />
+<img src="${SERVICES.streak}/?user=sena-labs&theme=radical&hide_border=true" alt="GitHub Streak" />
 
 </div>
 

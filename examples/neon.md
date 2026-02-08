@@ -1,6 +1,6 @@
 <div align="center">
 
-![Header](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=Ivan%20Sena&fontSize=80&fontColor=fff&animation=twinkling&fontAlignY=35)
+![Header](${SERVICES.capsule}/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=Ivan%20Sena&fontSize=80&fontColor=fff&animation=twinkling&fontAlignY=35)
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Orbitron&size=25&pause=1000&color=00F7FF&center=true&vCenter=true&width=600&lines=Welcome%20to%20my%20neon%20world!)](https://git.io/typing-svg)
 
@@ -8,7 +8,7 @@
 
 ---
 
-<img align="right" width="400" src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117" />
+<img align="right" width="400" src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117" />
 
 ## ⚡ ABOUT ME
 
@@ -36,9 +36,9 @@ const sena-labs = {
 
 <div align="center">
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=sena-labs&theme=tokyonight&hide_border=true&background=0D1117" alt="Streak" />
+<img src="${SERVICES.streak}/?user=sena-labs&theme=tokyonight&hide_border=true&background=0D1117" alt="Streak" />
 
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=sena-labs&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117" alt="Languages" />
+<img src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=sena-labs&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117" alt="Languages" />
 
 </div>
 
@@ -54,4 +54,4 @@ const sena-labs = {
 
 ---
 
-![Footer](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer)
+![Footer](${SERVICES.capsule}/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer)

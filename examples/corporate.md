@@ -24,7 +24,7 @@
 ## GitHub Analytics
 
 <p>
-  <img src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=graywhite&hide_border=true" alt="GitHub Statistics" />
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=graywhite&hide_border=true" alt="GitHub Statistics" />
 </p>
 
 ## Contact

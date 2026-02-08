@@ -29,11 +29,11 @@ drwxr-xr-x  PowerShell
 ## > git log --oneline
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=dark&hide_border=true&bg_color=0d1117" alt="Stats" />
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=dark&hide_border=true&bg_color=0d1117" alt="Stats" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=sena-labs&theme=dark&hide_border=true&background=0d1117" alt="Streak" />
+  <img src="${SERVICES.streak}/?user=sena-labs&theme=dark&hide_border=true&background=0d1117" alt="Streak" />
 </p>
 
 ## > cat contact.txt
