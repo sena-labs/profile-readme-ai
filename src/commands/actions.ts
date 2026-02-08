@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import fs from 'fs/promises';
 import path from 'path';
+import { validateOutputPath } from '../utils/path-validation.js';
 
 interface ActionsOptions {
   output?: string;
@@ -127,7 +128,8 @@ export async function actions(options: ActionsOptions): Promise<void> {
 
   // Determine output path
   const outputPath = options.output || '.github/workflows/update-readme.yml';
-  const outputDir = path.dirname(outputPath);
+  const resolvedOutput = validateOutputPath(outputPath, 'yaml');
+  const outputDir = path.dirname(resolvedOutput);
 
   // Preview
   console.log(chalk.bold('\n📄 Workflow Preview:\n'));
@@ -149,7 +151,7 @@ export async function actions(options: ActionsOptions): Promise<void> {
     try {
       // Create directory if it doesn't exist
       await fs.mkdir(outputDir, { recursive: true });
-      await fs.writeFile(outputPath, workflowContent, 'utf-8');
+      await fs.writeFile(resolvedOutput, workflowContent, 'utf-8');
       
       console.log(chalk.green(`\n✅ Workflow saved to ${outputPath}`));
       

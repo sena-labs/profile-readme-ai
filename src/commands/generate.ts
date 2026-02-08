@@ -7,6 +7,7 @@ import { generateBio, generateTagline } from '../services/ai.js';
 import { generateReadme } from '../templates/index.js';
 import { loadCustomTheme, generateCustomTheme } from '../templates/custom.js';
 import { getOpenAIKey, getGitHubToken } from '../utils/config.js';
+import { validateOutputPath } from '../utils/path-validation.js';
 
 interface GenerateOptions {
   username?: string;
@@ -156,6 +157,9 @@ export async function generate(options: GenerateOptions): Promise<void> {
       return;
     }
 
+    // Validate output path
+    const resolvedOutput = validateOutputPath(options.output, 'markdown');
+
     // Confirm save
     const { confirmSave } = await inquirer.prompt([
       {
@@ -167,7 +171,7 @@ export async function generate(options: GenerateOptions): Promise<void> {
     ]);
 
     if (confirmSave) {
-      await fs.writeFile(options.output, readme, 'utf-8');
+      await fs.writeFile(resolvedOutput, readme, 'utf-8');
       console.log(chalk.green(`\n✅ README saved to ${options.output}`));
       console.log(chalk.cyan('\nNext steps:'));
       console.log(`  1. Review the generated README`);

@@ -9,6 +9,7 @@ import {
   LANGUAGE_NAMES,
 } from '../services/ai-advanced.js';
 import { getOpenAIKey, getGitHubToken } from '../utils/config.js';
+import { validateOutputPath } from '../utils/path-validation.js';
 
 interface TranslateOptions {
   username?: string;
@@ -125,7 +126,8 @@ export async function translate(options: TranslateOptions): Promise<void> {
 
     if (save) {
       const outputPath = options.output || './multilang-bio.md';
-      await fs.writeFile(outputPath, markdownSnippet, 'utf-8');
+      const resolvedOutput = validateOutputPath(outputPath, 'markdown');
+      await fs.writeFile(resolvedOutput, markdownSnippet, 'utf-8');
       console.log(chalk.green(`\n✅ Saved to ${outputPath}`));
     }
 
@@ -141,7 +143,8 @@ export async function translate(options: TranslateOptions): Promise<void> {
 
     if (saveJson) {
       const jsonPath = './bios.json';
-      await fs.writeFile(jsonPath, JSON.stringify(bios, null, 2), 'utf-8');
+      const resolvedJson = validateOutputPath(jsonPath, 'json');
+      await fs.writeFile(resolvedJson, JSON.stringify(bios, null, 2), 'utf-8');
       console.log(chalk.green(`✅ Saved to ${jsonPath}`));
     }
 

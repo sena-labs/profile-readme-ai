@@ -1,4 +1,5 @@
 import type { GitHubAnalysis } from '../services/github.js';
+import { sanitizeUrl } from '../utils/path-validation.js';
 
 export interface TemplateOptions {
   theme: string;
@@ -130,7 +131,7 @@ ${options.bio || profile.bio || ''}
   readme += `## 🤝 Connect\n\n<div align="center">\n\n`;
   readme += `[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
   if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
-  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](${profile.blog})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](${sanitizeUrl(profile.blog)})`;
   readme += `\n\n</div>\n\n`;
 
   // Footer
@@ -176,7 +177,7 @@ function generateHackerTheme(analysis: GitHubAnalysis, options: TemplateOptions)
   readme += `## \$ cat ~/.ssh/socials.pub\n\n\`\`\`\n`;
   readme += `github    = git@github.com:${u}\n`;
   if (profile.twitter) readme += `twitter   = @${profile.twitter}\n`;
-  if (profile.blog) readme += `website   = ${profile.blog}\n`;
+  if (profile.blog) readme += `website   = ${sanitizeUrl(profile.blog)}\n`;
   readme += `\`\`\`\n\n`;
 
   readme += `---\n\n<div align="center">\n\n\`\`\`bash\n[${u}@github ~]$ echo "Thanks for visiting!" && exit 0\n\`\`\`\n\n`;
@@ -225,7 +226,7 @@ function generateCreativeTheme(analysis: GitHubAnalysis, options: TemplateOption
   readme += `## 🌐 Let's Connect!\n\n<div align="center">\n\n`;
   readme += `[![GitHub](https://img.shields.io/badge/GitHub-F83600?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
   if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-fe8c00?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
-  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-F83600?style=for-the-badge&logo=safari&logoColor=white)](${profile.blog})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-F83600?style=for-the-badge&logo=safari&logoColor=white)](${sanitizeUrl(profile.blog)})`;
   readme += `\n\n</div>\n\n`;
 
   // Footer
@@ -277,7 +278,7 @@ function generateCorporateTheme(analysis: GitHubAnalysis, options: TemplateOptio
   readme += `<div align="center">\n\n`;
   readme += `[![GitHub](https://img.shields.io/badge/GitHub-1a365d?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
   if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-1a365d?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
-  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-1a365d?style=for-the-badge&logo=safari&logoColor=white)](${profile.blog})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-1a365d?style=for-the-badge&logo=safari&logoColor=white)](${sanitizeUrl(profile.blog)})`;
   readme += `\n\n</div>\n\n`;
 
   readme += `---\n\n<div align="center">\n\n*Open to collaborations and consulting opportunities*\n\n`;
@@ -331,7 +332,7 @@ function generateRetroTheme(analysis: GitHubAnalysis, options: TemplateOptions):
   readme += `## 🔗 WARP ZONE\n\n<div align="center">\n\n`;
   readme += `[![GitHub](https://img.shields.io/badge/GITHUB-daa520?style=for-the-badge&logo=github&logoColor=black)](https://github.com/${u})`;
   if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/TWITTER-daa520?style=for-the-badge&logo=twitter&logoColor=black)](https://twitter.com/${profile.twitter})`;
-  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/WEBSITE-daa520?style=for-the-badge&logo=safari&logoColor=black)](${profile.blog})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/WEBSITE-daa520?style=for-the-badge&logo=safari&logoColor=black)](${sanitizeUrl(profile.blog)})`;
   readme += `\n\n</div>\n\n`;
 
   readme += `---\n\n<div align="center">\n\n`;
@@ -394,7 +395,7 @@ function generateNeonTheme(analysis: GitHubAnalysis, options: TemplateOptions): 
   readme += `## 🌐 NETWORK\n\n<div align="center">\n\n`;
   readme += `[![GitHub](https://img.shields.io/badge/GITHUB-0d1117?style=for-the-badge&logo=github&logoColor=00f7ff)](https://github.com/${u})`;
   if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/TWITTER-0d1117?style=for-the-badge&logo=twitter&logoColor=ff00ff)](https://twitter.com/${profile.twitter})`;
-  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/WEBSITE-0d1117?style=for-the-badge&logo=safari&logoColor=00f7ff)](${profile.blog})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/WEBSITE-0d1117?style=for-the-badge&logo=safari&logoColor=00f7ff)](${sanitizeUrl(profile.blog)})`;
   readme += `\n\n</div>\n\n`;
 
   readme += `---\n\n<div align="center">\n\n`;
@@ -446,7 +447,7 @@ function generateDarkTheme(analysis: GitHubAnalysis, options: TemplateOptions): 
   readme += `## 🔗 Connect\n\n<div align="center">\n\n`;
   readme += `[![GitHub](https://img.shields.io/badge/GitHub-0d1117?style=for-the-badge&logo=github&logoColor=c9d1d9)](https://github.com/${u})`;
   if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-0d1117?style=for-the-badge&logo=twitter&logoColor=1da1f2)](https://twitter.com/${profile.twitter})`;
-  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-0d1117?style=for-the-badge&logo=safari&logoColor=c9d1d9)](${profile.blog})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-0d1117?style=for-the-badge&logo=safari&logoColor=c9d1d9)](${sanitizeUrl(profile.blog)})`;
   readme += `\n\n</div>\n\n`;
 
   readme += `---\n\n<div align="center">\n\n`;
@@ -499,7 +500,7 @@ function generateLightTheme(analysis: GitHubAnalysis, options: TemplateOptions):
   readme += `## 📫 Get in Touch\n\n<div align="center">\n\n`;
   readme += `[![GitHub](https://img.shields.io/badge/GitHub-333?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${u})`;
   if (profile.twitter) readme += ` [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})`;
-  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-4CAF50?style=for-the-badge&logo=safari&logoColor=white)](${profile.blog})`;
+  if (profile.blog) readme += ` [![Website](https://img.shields.io/badge/Website-4CAF50?style=for-the-badge&logo=safari&logoColor=white)](${sanitizeUrl(profile.blog)})`;
   readme += `\n\n</div>\n\n`;
 
   readme += `---\n\n<div align="center">\n\n`;

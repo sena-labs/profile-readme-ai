@@ -1,12 +1,31 @@
 import fs from 'fs/promises';
 import type { GitHubAnalysis } from '../services/github.js';
+import { sanitizeUrl } from '../utils/path-validation.js';
 
 // Service URLs — using reliable mirrors to avoid rate limit issues
 const SERVICES = {
   stats: 'https://github-readme-stats-sigma-five.vercel.app',
   streak: 'https://github-readme-streak-stats.herokuapp.com',
   capsule: 'https://capsule-render.vercel.app',
+  typing: 'https://readme-typing-svg.demolab.com',
 };
+
+/**
+ * Safely encode text for use in URLs
+ */
+function safeUrlEncode(text: string): string {
+  return encodeURIComponent(text).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+}
+
+/**
+ * Sanitize text for safe inclusion in generated markdown
+ */
+function sanitizeText(text: string | null | undefined, maxLength = 500): string {
+  if (!text) return '';
+  return text
+    .replace(/[\[\]<>]/g, '')
+    .slice(0, maxLength);
+}
 
 export interface CustomThemeConfig {
   name: string;
@@ -27,7 +46,6 @@ export interface CustomThemeConfig {
     stats: boolean;
     connect: boolean;
   };
-  customCSS?: string;
   footer?: string;
 }
 
@@ -56,7 +74,17 @@ export async function loadCustomTheme(filePath: string): Promise<CustomThemeConf
   try {
     const content = await fs.readFile(filePath, 'utf-8');
     const userConfig = JSON.parse(content) as Partial<CustomThemeConfig>;
-    return { ...defaultConfig, ...userConfig };
+    
+    // Deep merge sections to preserve defaults for missing keys
+    const mergedSections = {
+      ...defaultConfig.sections,
+      ...(userConfig.sections && typeof userConfig.sections === 'object' ? userConfig.sections : {}),
+    };
+    
+    // Strip dangerous keys from parsed JSON
+    const { __proto__, constructor, prototype, ...safeConfig } = userConfig as any;
+    
+    return { ...defaultConfig, ...safeConfig, sections: mergedSections };
   } catch (error) {
     throw new Error(`Failed to load custom theme: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -70,7 +98,7 @@ export function generateCustomTheme(analysis: GitHubAnalysis, config: CustomThem
   if (config.headerStyle === 'banner') {
     readme += `<div align="center">
 
-![Header](https://capsule-render.vercel.app/api?type=waving&color=${config.headerColor || 'gradient'}&height=200&section=header&text=${encodeURIComponent(profile.name || profile.username)}&fontSize=80&fontColor=fff${config.headerAnimation !== 'none' ? `&animation=${config.headerAnimation}` : ''}&fontAlignY=35)
+![Header](${SERVICES.capsule}/api?type=waving&color=${config.headerColor || 'gradient'}&height=200&section=header&text=${safeUrlEncode(profile.name || profile.username)}&fontSize=80&fontColor=fff${config.headerAnimation !== 'none' ? `&animation=${config.headerAnimation}` : ''}&fontAlignY=35)
 
 `;
   } else if (config.headerStyle === 'text') {
@@ -93,7 +121,7 @@ export function generateCustomTheme(analysis: GitHubAnalysis, config: CustomThem
 
   // Typing animation
   if (config.showTypingAnimation && options.tagline) {
-    readme += `[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=${config.typingColor || '36BCF7'}&center=true&vCenter=true&width=435&lines=${encodeURIComponent(options.tagline)})](https://git.io/typing-svg)
+    readme += `[![Typing SVG](${SERVICES.typing}?font=Fira+Code&pause=1000&color=${config.typingColor || '36BCF7'}&center=true&vCenter=true&width=435&lines=${safeUrlEncode(options.tagline)})](https://git.io/typing-svg)
 
 `;
   }
@@ -124,7 +152,7 @@ ${options.bio || profile.bio || ''}
 
 ${topLanguages.map(lang => {
   const badge = lang.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return `![${lang}](https://img.shields.io/badge/-${encodeURIComponent(lang)}-${config.badgeColor || '36BCF7'}?style=${config.badgeStyle}&logo=${badge}&logoColor=white)`;
+  return `![${sanitizeText(lang, 30)}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-${config.badgeColor || '36BCF7'}?style=${config.badgeStyle}&logo=${badge}&logoColor=white)`;
 }).join(' ')}
 
 </div>
@@ -145,7 +173,7 @@ ${topLanguages.map(lang => {
 `;
     }
     if (config.showStreak) {
-      readme += `<img src="https://github-readme-streak-stats.herokuapp.com/?user=${profile.username}&theme=${config.statsTheme}&hide_border=true" alt="GitHub Streak" />
+      readme += `<img src="${SERVICES.streak}/?user=${profile.username}&theme=${config.statsTheme}&hide_border=true" alt="GitHub Streak" />
 
 `;
     }
@@ -167,7 +195,7 @@ ${topLanguages.map(lang => {
 
 [![GitHub](https://img.shields.io/badge/GitHub-${config.badgeColor || '181717'}?style=${config.badgeStyle}&logo=github&logoColor=white)](https://github.com/${profile.username})
 ${profile.twitter ? `[![Twitter](https://img.shields.io/badge/Twitter-${config.badgeColor || '1DA1F2'}?style=${config.badgeStyle}&logo=twitter&logoColor=white)](https://twitter.com/${profile.twitter})` : ''}
-${profile.blog ? `[![Website](https://img.shields.io/badge/Website-${config.badgeColor || 'FF7139'}?style=${config.badgeStyle}&logo=safari&logoColor=white)](${profile.blog})` : ''}
+${profile.blog ? `[![Website](https://img.shields.io/badge/Website-${config.badgeColor || 'FF7139'}?style=${config.badgeStyle}&logo=safari&logoColor=white)](${sanitizeUrl(profile.blog)})` : ''}
 
 </div>
 
@@ -176,18 +204,19 @@ ${profile.blog ? `[![Website](https://img.shields.io/badge/Website-${config.badg
 
   // Footer
   if (config.footer) {
+    const safeFooter = sanitizeText(config.footer, 200);
     readme += `---
 
 <div align="center">
 
-${config.footer}
+${safeFooter}
 
 </div>
 `;
   } else if (config.headerStyle === 'banner') {
     readme += `---
 
-![Footer](https://capsule-render.vercel.app/api?type=waving&color=${config.headerColor || 'gradient'}&height=100&section=footer)
+![Footer](${SERVICES.capsule}/api?type=waving&color=${config.headerColor || 'gradient'}&height=100&section=footer)
 `;
   }
 

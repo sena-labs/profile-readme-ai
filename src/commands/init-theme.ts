@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import fs from 'fs/promises';
 import { generateSampleThemeFile } from '../templates/custom.js';
+import { validateOutputPath } from '../utils/path-validation.js';
 
 interface InitThemeOptions {
   output: string;
@@ -9,7 +10,8 @@ interface InitThemeOptions {
 export async function initTheme(options: InitThemeOptions): Promise<void> {
   try {
     const sampleTheme = generateSampleThemeFile();
-    await fs.writeFile(options.output, sampleTheme, 'utf-8');
+    const resolvedOutput = validateOutputPath(options.output, 'json');
+    await fs.writeFile(resolvedOutput, sampleTheme, 'utf-8');
     
     console.log(chalk.green(`\n✅ Sample theme created: ${options.output}\n`));
     

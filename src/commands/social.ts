@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import { analyzeGitHubProfile, isValidUsername } from '../services/github.js';
 import { generateOgImageUrl, generateSocialCard, getStatsCardUrls, type SocialCardStyle } from '../services/preview.js';
 import { getGitHubToken } from '../utils/config.js';
+import { validateOutputPath } from '../utils/path-validation.js';
 
 interface SocialOptions {
   username?: string;
@@ -92,6 +93,7 @@ export async function social(options: SocialOptions): Promise<void> {
 
     // Save
     const outputPath = options.output || './social-card.md';
+    const resolvedOutput = validateOutputPath(outputPath, 'markdown');
     const { save } = await inquirer.prompt([
       {
         type: 'confirm',
@@ -102,7 +104,7 @@ export async function social(options: SocialOptions): Promise<void> {
     ]);
 
     if (save) {
-      await fs.writeFile(outputPath, socialCard, 'utf-8');
+      await fs.writeFile(resolvedOutput, socialCard, 'utf-8');
       console.log(chalk.green(`\n✅ Social card saved to ${outputPath}`));
     }
 

@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
 import { isValidUsername } from '../services/github.js';
+import { fetchWithTimeout } from '../utils/clients.js';
 
 interface PreviewOptions {
   username?: string;
@@ -32,13 +33,13 @@ export async function preview(options: PreviewOptions): Promise<void> {
   const spinner = ora('Fetching profile README...').start();
 
   try {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `https://raw.githubusercontent.com/${username}/${username}/main/README.md`
     );
 
     if (!response.ok) {
       // Try master branch
-      const masterResponse = await fetch(
+      const masterResponse = await fetchWithTimeout(
         `https://raw.githubusercontent.com/${username}/${username}/master/README.md`
       );
       
