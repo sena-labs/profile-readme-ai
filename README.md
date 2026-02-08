@@ -41,6 +41,31 @@
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=161b22&height=1" width="100%"/>
 
+## 🎬 Demo
+
+<img src="https://raw.githubusercontent.com/sena-labs/profile-readme-ai/main/assets/demo.gif" alt="CLI Demo" width="700"/>
+
+<details>
+<summary>&nbsp;<code>// example output for popular profiles</code></summary>
+<br>
+
+| Profile | Theme | Preview |
+|---------|-------|--------|
+| **[@torvalds](https://github.com/torvalds)** | `hacker` | [View](./examples/torvalds-hacker.md) |
+| **[@sindresorhus](https://github.com/sindresorhus)** | `minimal` | [View](./examples/sindresorhus-minimal.md) |
+| **[@tj](https://github.com/tj)** | `neon` | [View](./examples/tj-neon.md) |
+| **[@gaearon](https://github.com/gaearon)** | `creative` | [View](./examples/gaearon-creative.md) |
+
+```bash
+# try it yourself
+$ npx profile-readme-ai generate -u torvalds -t hacker --dry-run
+$ npx profile-readme-ai generate -u sindresorhus -t minimal --dry-run
+```
+
+</details>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=161b22&height=1" width="100%"/>
+
 ## ⚡ Quick Start
 
 ```bash
@@ -370,6 +395,8 @@ $ prai configure
 <img src="https://capsule-render.vercel.app/api?type=rect&color=161b22&height=1" width="100%"/>
 
 ## 🤝 Contributing
+
+Contributions welcome! Check out our [good first issues](https://github.com/sena-labs/profile-readme-ai/labels/good%20first%20issue) to get started.
 
 ```bash
 $ git clone https://github.com/sena-labs/profile-readme-ai.git
