@@ -43,7 +43,7 @@
 
 ## 🎬 Demo
 
-<img src="https://raw.githubusercontent.com/sena-labs/profile-readme-ai/main/assets/demo.gif" alt="CLI Demo" width="700"/>
+<img src="https://raw.githubusercontent.com/sena-labs/profile-readme-ai/main/assets/demo.svg" alt="CLI Demo" width="700"/>
 
 <details>
 <summary>&nbsp;<code>// example output for popular profiles</code></summary>
