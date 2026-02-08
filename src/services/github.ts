@@ -48,7 +48,7 @@ export async function analyzeGitHubProfile(username: string, token?: string): Pr
     company: user.company,
     location: user.location,
     blog: user.blog,
-    twitter: user.twitter_username,
+    twitter: user.twitter_username ?? null,
     avatarUrl: user.avatar_url,
     followers: user.followers,
     following: user.following,
@@ -66,7 +66,7 @@ export async function analyzeGitHubProfile(username: string, token?: string): Pr
   const repositories: Repository[] = repos.map(repo => ({
     name: repo.name,
     description: repo.description,
-    language: repo.language,
+    language: repo.language ?? null,
     stars: repo.stargazers_count || 0,
     forks: repo.forks_count || 0,
     url: repo.html_url,
