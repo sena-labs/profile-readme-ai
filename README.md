@@ -20,9 +20,14 @@
 
 - 🔍 **Auto-analyze** your GitHub profile and repositories
 - 🤖 **AI-powered** bio and tagline generation (OpenAI)
-- 🎨 **Multiple themes**: Minimal, Hacker, Creative, Corporate
+- 🎨 **8 Themes**: Minimal, Hacker, Creative, Corporate, Retro, Neon, Dark, Light
+- 🎭 **Custom themes** - Create your own with JSON config
 - 📊 **GitHub stats** integration (github-readme-stats)
 - 🛠 **Tech stack badges** auto-detected from your repos
+- 🧠 **Deep analysis** - Reads your READMEs for accurate bio
+- 💡 **AI suggestions** - Get improvement tips for your profile
+- 🌍 **Multi-language** - Generate bio in 10 languages
+- 🖼️ **Social preview** - Generate shareable images
 - ⚡ **One command** to generate everything
 
 ## 📦 Installation
@@ -51,8 +56,12 @@ npx profile-readme-ai generate -u your-username -t hacker
 
 ```bash
 prai generate      # Generate a new profile README
+prai analyze       # Deep analyze profile with AI suggestions
+prai translate     # Generate bio in multiple languages
+prai social        # Generate social preview images
 prai configure     # Set up API keys (OpenAI, GitHub)
 prai preview       # Preview any GitHub profile README
+prai init-theme    # Create custom theme template
 prai themes        # List available themes
 ```
 
@@ -68,17 +77,57 @@ prai themes        # List available themes
 
 ## 🎨 Themes
 
-### Minimal
-Clean and simple design, perfect for professionals.
+| Theme | Description |
+|-------|-------------|
+| `minimal` | Clean and simple design |
+| `hacker` | Terminal-style with ASCII art |
+| `creative` | Colorful with animations |
+| `corporate` | Professional business style |
+| `retro` | Pixel art gaming aesthetic |
+| `neon` | Cyberpunk neon glow effect |
+| `dark` | Sleek dark mode design |
+| `light` | Clean light mode design |
 
-### Hacker
-Terminal-style with ASCII art for the tech enthusiast.
+### Custom Themes
 
-### Creative  
-Colorful with animations, great for standing out.
+Create your own theme:
 
-### Corporate
-Professional business style for enterprise developers.
+```bash
+prai init-theme -o my-theme.json
+prai generate --theme-file my-theme.json
+```
+
+## 🧠 AI Features
+
+### Deep Profile Analysis
+
+Analyze any GitHub profile with AI-powered insights:
+
+```bash
+prai analyze -u username
+```
+
+This will:
+- Read READMEs from top repositories
+- Generate an accurate, personalized bio
+- Provide improvement suggestions
+
+### Multi-Language Bio
+
+Generate your bio in multiple languages:
+
+```bash
+prai translate -u username
+# Select from: EN, IT, ES, DE, FR, PT, ZH, JA, KO, RU
+```
+
+### Social Preview Images
+
+Generate shareable images for social media:
+
+```bash
+prai social -u username
+```
 
 ## ⚙️ Configuration
 

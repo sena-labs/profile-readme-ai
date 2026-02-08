@@ -8,6 +8,8 @@ import { configure } from './commands/configure.js';
 import { preview } from './commands/preview.js';
 import { social } from './commands/social.js';
 import { initTheme } from './commands/init-theme.js';
+import { analyze } from './commands/analyze.js';
+import { translate } from './commands/translate.js';
 
 const program = new Command();
 
@@ -53,6 +55,23 @@ program
   .description('Preview your current profile README')
   .option('-u, --username <username>', 'GitHub username')
   .action(preview);
+
+program
+  .command('analyze')
+  .alias('a')
+  .description('Deep analyze profile with AI: repo analysis, enhanced bio, improvement suggestions')
+  .option('-u, --username <username>', 'GitHub username')
+  .option('-l, --language <lang>', 'Bio language: en, it, es, de, fr, pt, zh, ja, ko, ru', 'en')
+  .action(analyze);
+
+program
+  .command('translate')
+  .alias('t')
+  .description('Generate bio in multiple languages')
+  .option('-u, --username <username>', 'GitHub username')
+  .option('--languages <langs>', 'Comma-separated language codes (e.g. en,it,es)')
+  .option('-o, --output <path>', 'Output file path')
+  .action(translate);
 
 program
   .command('social')
