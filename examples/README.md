@@ -37,6 +37,7 @@ prai themes
 | [social-card.md](./social-card.md) | `prai social` | Social preview cards & sharing badges |
 | [demo-workflow.yml](./demo-workflow.yml) | `prai actions` | GitHub Actions auto-update workflow |
 | [demo-theme.json](./demo-theme.json) | `prai init-theme` | Custom theme scaffold |
+| [multilang-bio.md](./multilang-bio.md) | `prai translate` | Bio in 10 languages (AI) |
 
 ## Custom Themes
 
