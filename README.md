@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/profile-readme-ai.svg)](https://www.npmjs.com/package/profile-readme-ai)
 [![npm downloads](https://img.shields.io/npm/dm/profile-readme-ai.svg)](https://www.npmjs.com/package/profile-readme-ai)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
 [![GitHub stars](https://img.shields.io/github/stars/sena-labs/profile-readme-ai?style=social)](https://github.com/sena-labs/profile-readme-ai)
 
@@ -195,7 +195,7 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ## 📜 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+Apache License 2.0 - see [LICENSE](LICENSE) for details.
 
 ---
 

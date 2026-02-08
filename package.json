@@ -30,7 +30,7 @@
     "developer-tools"
   ],
   "author": "sena-labs",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/sena-labs/profile-readme-ai"
