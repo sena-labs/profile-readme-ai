@@ -19,19 +19,19 @@
 
 <!-- ═══════════════════ STATS ═══════════════════ -->
 
-<img src="https://github-readme-stats.vercel.app/api?username=sena-labs&show_icons=true&theme=github_dark&hide_border=true&bg_color=0D1117&rank_icon=github" alt="Stats" width="49%" />
+<img src="https://github-readme-stats-sigma-five.vercel.app/api?username=sena-labs&show_icons=true&theme=github_dark&hide_border=true&bg_color=0D1117&rank_icon=github" alt="Stats" width="49%" />
 <img src="https://github-readme-streak-stats.herokuapp.com/?user=sena-labs&theme=dark&hide_border=true&background=0D1117" alt="Streak" width="49%" />
 
 <br>
 
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=sena-labs&layout=donut-vertical&theme=github_dark&hide_border=true&bg_color=0D1117&langs_count=8" alt="Languages" width="30%" />
+<img src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=sena-labs&layout=donut-vertical&theme=github_dark&hide_border=true&bg_color=0D1117&langs_count=8" alt="Languages" width="30%" />
 <img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=sena-labs&theme=github_dark&utcOffset=0" alt="Productive Time" width="49%" />
 
 <!-- ═════════════════ TROPHIES ═════════════════ -->
 
 <br>
 
-<img src="https://github-profile-trophy.vercel.app/?username=sena-labs&theme=darkhub&no-frame=true&no-bg=true&row=1&column=7" alt="Trophies" width="100%" />
+<img src="https://github-profile-trophy-fork-two.vercel.app/?username=sena-labs&theme=darkhub&no-frame=true&no-bg=true&row=1&column=7" alt="Trophies" width="100%" />
 
 <!-- ═════════════════ ACTIVITY ═════════════════ -->
 
@@ -43,8 +43,8 @@
 
 <br>
 
-<a href="https://github.com/sena-labs/achievements-playground"><img src="https://github-readme-stats.vercel.app/api/pin/?username=sena-labs&repo=achievements-playground&theme=github_dark&hide_border=true&bg_color=0D1117" alt="achievements-playground" /></a>
-<a href="https://github.com/sena-labs/profile-readme-ai"><img src="https://github-readme-stats.vercel.app/api/pin/?username=sena-labs&repo=profile-readme-ai&theme=github_dark&hide_border=true&bg_color=0D1117" alt="profile-readme-ai" /></a>
+<a href="https://github.com/sena-labs/achievements-playground"><img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=sena-labs&repo=achievements-playground&theme=github_dark&hide_border=true&bg_color=0D1117" alt="achievements-playground" /></a>
+<a href="https://github.com/sena-labs/profile-readme-ai"><img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=sena-labs&repo=profile-readme-ai&theme=github_dark&hide_border=true&bg_color=0D1117" alt="profile-readme-ai" /></a>
 
 <!-- ══════════════════ PROFILE ═════════════════ -->
 

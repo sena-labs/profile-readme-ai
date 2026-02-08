@@ -51,8 +51,8 @@ const SERVICES = {
   stats: 'https://github-readme-stats-sigma-five.vercel.app',
   // Streak stats — herokuapp instance is stable
   streak: 'https://github-readme-streak-stats.herokuapp.com',
-  // Trophy — using a known working mirror
-  trophy: 'https://github-profile-trophy.vercel.app',
+  // Trophy — using a known working mirror (main instance often rate limited)
+  trophy: 'https://github-profile-trophy-fork-two.vercel.app',
   // Activity graph
   activity: 'https://github-readme-activity-graph.vercel.app',
   // Summary cards
