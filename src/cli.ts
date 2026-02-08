@@ -6,6 +6,8 @@ import boxen from 'boxen';
 import { generate } from './commands/generate.js';
 import { configure } from './commands/configure.js';
 import { preview } from './commands/preview.js';
+import { social } from './commands/social.js';
+import { initTheme } from './commands/init-theme.js';
 
 const program = new Command();
 
@@ -32,7 +34,8 @@ program
   .alias('g')
   .description('Generate a new profile README')
   .option('-u, --username <username>', 'GitHub username')
-  .option('-t, --theme <theme>', 'Theme: minimal, hacker, creative, corporate', 'minimal')
+  .option('-t, --theme <theme>', 'Theme: minimal, hacker, creative, corporate, retro, neon, dark, light', 'minimal')
+  .option('--theme-file <path>', 'Load custom theme from JSON file')
   .option('-o, --output <path>', 'Output file path', './README.md')
   .option('--no-ai', 'Skip AI bio generation')
   .option('--no-stats', 'Skip GitHub stats cards')
@@ -52,6 +55,20 @@ program
   .action(preview);
 
 program
+  .command('social')
+  .alias('s')
+  .description('Generate social preview images and sharing cards')
+  .option('-u, --username <username>', 'GitHub username')
+  .option('-t, --theme <theme>', 'Color theme: dark, light', 'dark')
+  .action(social);
+
+program
+  .command('init-theme')
+  .description('Create a sample custom theme JSON file')
+  .option('-o, --output <path>', 'Output file path', './my-theme.json')
+  .action(initTheme);
+
+program
   .command('themes')
   .description('List available themes')
   .action(() => {
@@ -61,10 +78,16 @@ program
       { name: 'hacker', desc: 'Terminal-style with ASCII art' },
       { name: 'creative', desc: 'Colorful with animations' },
       { name: 'corporate', desc: 'Professional business style' },
+      { name: 'retro', desc: 'Pixel art gaming aesthetic' },
+      { name: 'neon', desc: 'Cyberpunk neon glow effect' },
+      { name: 'dark', desc: 'Sleek dark mode design' },
+      { name: 'light', desc: 'Clean light mode design' },
     ];
     themes.forEach(t => {
       console.log(`  ${chalk.cyan(t.name.padEnd(12))} ${chalk.gray(t.desc)}`);
     });
+    console.log();
+    console.log(chalk.gray('  Use --theme-file to load a custom theme JSON'));
     console.log();
   });
 
