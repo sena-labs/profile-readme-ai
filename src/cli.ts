@@ -10,26 +10,40 @@ import { social } from './commands/social.js';
 import { initTheme } from './commands/init-theme.js';
 import { analyze } from './commands/analyze.js';
 import { translate } from './commands/translate.js';
+import { VERSION, showDetailedVersion, checkFirstRun, showWelcomeMessage } from './utils/version.js';
 
 const program = new Command();
 
-console.log(
-  boxen(
-    chalk.bold.cyan('🚀 Profile README AI') + '\n' +
-    chalk.gray('Generate stunning GitHub profiles with AI'),
-    {
-      padding: 1,
-      margin: 1,
-      borderStyle: 'round',
-      borderColor: 'cyan'
-    }
-  )
-);
+// Check for first run
+const isFirstRun = checkFirstRun();
+
+// Show welcome on first run, otherwise show compact header
+if (isFirstRun) {
+  showWelcomeMessage();
+} else {
+  console.log(
+    boxen(
+      chalk.bold.cyan('🚀 Profile README AI') + ' ' + chalk.gray(`v${VERSION}`) + '\n' +
+      chalk.gray('Generate stunning GitHub profiles with AI'),
+      {
+        padding: 1,
+        margin: 1,
+        borderStyle: 'round',
+        borderColor: 'cyan'
+      }
+    )
+  );
+}
 
 program
   .name('profile-readme-ai')
   .description('AI-powered GitHub Profile README generator')
-  .version('1.0.0');
+  .version(VERSION, '-V, --version', 'Output version information')
+  .option('--info', 'Show detailed version and configuration info')
+  .on('option:info', () => {
+    showDetailedVersion();
+    process.exit(0);
+  });
 
 program
   .command('generate')

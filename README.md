@@ -3,16 +3,44 @@
 # 🚀 Profile README AI
 
 [![npm version](https://img.shields.io/npm/v/profile-readme-ai.svg)](https://www.npmjs.com/package/profile-readme-ai)
+[![npm downloads](https://img.shields.io/npm/dm/profile-readme-ai.svg)](https://www.npmjs.com/package/profile-readme-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
+[![GitHub stars](https://img.shields.io/github/stars/sena-labs/profile-readme-ai?style=social)](https://github.com/sena-labs/profile-readme-ai)
 
 **Generate stunning GitHub profile READMEs with AI in seconds!**
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Themes](#-themes) • [Contributing](#-contributing)
+[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Themes](#-themes) • [AI Features](#-ai-features)
 
 ⭐ **Star this repo if you find it useful!** ⭐
 
 </div>
+
+---
+
+## 🎬 Demo
+
+```bash
+# One command to generate your profile README
+npx profile-readme-ai generate
+```
+
+<details>
+<summary>👀 Click to see example output (Neon theme)</summary>
+
+![Neon Theme Example](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=header&text=Your%20Name&fontSize=40&fontColor=fff&animation=twinkling)
+
+```javascript
+const developer = {
+  languages: ["TypeScript", "Python", "Go"],
+  currentFocus: "Building amazing tools",
+  funFact: "I mass generate at neon speed"
+};
+```
+
+</details>
+
+**See all theme examples:** [examples/](./examples/)
 
 ---
 
