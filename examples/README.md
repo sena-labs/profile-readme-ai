@@ -30,6 +30,14 @@ prai generate -u YOUR_USERNAME -t neon
 prai themes
 ```
 
+## Other Outputs
+
+| File | Command | Description |
+|------|---------|-------------|
+| [social-card.md](./social-card.md) | `prai social` | Social preview cards & sharing badges |
+| [demo-workflow.yml](./demo-workflow.yml) | `prai actions` | GitHub Actions auto-update workflow |
+| [demo-theme.json](./demo-theme.json) | `prai init-theme` | Custom theme scaffold |
+
 ## Custom Themes
 
 Create your own theme:
@@ -44,4 +52,4 @@ prai generate --theme-file my-theme.json
 
 ---
 
-**Note:** These examples use placeholder data. Your generated README will use your actual GitHub profile information.
+**Note:** All examples were generated live using `prai` against the [@sena-labs](https://github.com/sena-labs) GitHub profile.

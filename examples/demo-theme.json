@@ -1,0 +1,20 @@
+{
+  "name": "Custom Theme",
+  "headerStyle": "banner",
+  "headerColor": "gradient",
+  "headerAnimation": "twinkling",
+  "showTypingAnimation": true,
+  "typingColor": "36BCF7",
+  "showStats": true,
+  "statsTheme": "default",
+  "showStreak": true,
+  "showLanguages": true,
+  "badgeStyle": "for-the-badge",
+  "badgeColor": "36BCF7",
+  "sections": {
+    "about": true,
+    "techStack": true,
+    "stats": true,
+    "connect": true
+  }
+}
