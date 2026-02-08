@@ -2,11 +2,9 @@ import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
 import fs from 'fs/promises';
-import Conf from 'conf';
-import { analyzeGitHubProfile } from '../services/github.js';
-import { generateSocialPreviewUrl, generateOgImageUrl, generateSocialCard, getStatsCardUrls } from '../services/preview.js';
-
-const config = new Conf({ projectName: 'profile-readme-ai' });
+import { analyzeGitHubProfile, isValidUsername } from '../services/github.js';
+import { generateOgImageUrl, generateSocialCard, getStatsCardUrls } from '../services/preview.js';
+import { getGitHubToken } from '../utils/config.js';
 
 interface SocialOptions {
   username?: string;
@@ -23,22 +21,32 @@ export async function social(options: SocialOptions): Promise<void> {
           type: 'input',
           name: 'username',
           message: 'Enter GitHub username:',
-          validate: (input: string) => input.length > 0 || 'Username is required',
+          validate: (input: string) => {
+            if (!input || input.length === 0) return 'Username is required';
+            if (!isValidUsername(input)) return 'Invalid GitHub username format';
+            return true;
+          },
         },
       ]);
       username = answers.username;
+    } else if (!isValidUsername(username)) {
+      console.error(chalk.red('Invalid GitHub username format'));
+      return;
     }
+
+    // At this point username is guaranteed to be a valid string
+    const validUsername = username as string;
 
     // Analyze profile
     const spinner = ora('Analyzing GitHub profile...').start();
     
-    const githubToken = config.get('githubToken') as string | undefined;
-    const analysis = await analyzeGitHubProfile(username!, githubToken);
+    const githubToken = getGitHubToken();
+    const analysis = await analyzeGitHubProfile(validUsername, githubToken);
     spinner.succeed('Profile analyzed');
 
     // Generate URLs
     const previewUrl = generateOgImageUrl(analysis, { theme: options.theme });
-    const statsUrls = getStatsCardUrls(username!, options.theme);
+    const statsUrls = getStatsCardUrls(validUsername, options.theme);
     const socialCard = generateSocialCard(analysis);
 
     console.log(chalk.bold('\n🖼️  Social Preview Images\n'));
@@ -94,7 +102,10 @@ export async function social(options: SocialOptions): Promise<void> {
     console.log();
 
   } catch (error) {
-    console.error(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`));
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    // Sanitize error message to not expose system paths
+    const sanitizedMessage = message.replace(/[A-Z]:\\[^\s]+/gi, '[path]').replace(/\/[^\s]+\/[^\s]+/g, '[path]');
+    console.error(chalk.red(`Error: ${sanitizedMessage}`));
     process.exit(1);
   }
 }

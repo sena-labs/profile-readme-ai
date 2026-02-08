@@ -40,7 +40,10 @@ export async function initTheme(options: InitThemeOptions): Promise<void> {
     console.log();
 
   } catch (error) {
-    console.error(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`));
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    // Sanitize error message to not expose system paths
+    const sanitizedMessage = message.replace(/[A-Z]:\\[^\s]+/gi, '[path]').replace(/\/[^\s]+\/[^\s]+/g, '[path]');
+    console.error(chalk.red(`Error: ${sanitizedMessage}`));
     process.exit(1);
   }
 }

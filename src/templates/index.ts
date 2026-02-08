@@ -32,9 +32,27 @@ const techBadges: Record<string, string> = {
   Svelte: 'svelte',
 };
 
+/**
+ * Safely encode text for use in URLs
+ */
+function safeUrlEncode(text: string): string {
+  return encodeURIComponent(text).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+}
+
+/**
+ * Sanitize text for safe inclusion in generated markdown
+ */
+function sanitizeText(text: string | null | undefined, maxLength = 500): string {
+  if (!text) return '';
+  // Remove potential markdown injection and limit length
+  return text
+    .replace(/[\[\]<>]/g, '')
+    .slice(0, maxLength);
+}
+
 function getTechBadge(lang: string): string {
   const badge = techBadges[lang] || lang.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return `![${lang}](https://img.shields.io/badge/-${encodeURIComponent(lang)}-05122A?style=flat&logo=${badge})`;
+  return `![${sanitizeText(lang, 30)}](https://img.shields.io/badge/-${safeUrlEncode(lang)}-05122A?style=flat&logo=${badge})`;
 }
 
 export function generateReadme(analysis: GitHubAnalysis, options: TemplateOptions): string {

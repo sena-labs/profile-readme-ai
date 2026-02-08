@@ -1,6 +1,6 @@
-import OpenAI from 'openai';
-import { Octokit } from 'octokit';
-import type { GitHubAnalysis, Repository } from './github.js';
+import type { GitHubAnalysis } from './github.js';
+import type { Octokit } from 'octokit';
+import { getOpenAIClient, getOctokitClient, fetchWithTimeout } from '../utils/clients.js';
 
 export type SupportedLanguage = 'en' | 'it' | 'es' | 'de' | 'fr' | 'pt' | 'zh' | 'ja' | 'ko' | 'ru';
 
@@ -37,9 +37,11 @@ async function fetchRepoReadme(octokit: Octokit, owner: string, repo: string): P
       mediaType: { format: 'raw' },
     });
     // Truncate to first 2000 chars to save tokens
-    const content = data as unknown as string;
+    // Handle both string and Buffer responses from the API
+    const content = typeof data === 'string' ? data : String(data);
     return content ? content.slice(0, 2000) : null;
-  } catch {
+  } catch (error) {
+    // Silently return null for missing READMEs (404) or permission errors
     return null;
   }
 }
@@ -51,7 +53,7 @@ export async function deepAnalyzeRepos(
   analysis: GitHubAnalysis,
   token?: string
 ): Promise<RepoDetails[]> {
-  const octokit = new Octokit({ auth: token });
+  const octokit = getOctokitClient(token);
   const { profile, repositories } = analysis;
   
   // Get top 5 non-forked repos by stars
@@ -60,18 +62,26 @@ export async function deepAnalyzeRepos(
     .sort((a, b) => b.stars - a.stars)
     .slice(0, 5);
 
+  // Fetch READMEs in parallel with concurrency limit of 3
+  const CONCURRENCY = 3;
   const repoDetails: RepoDetails[] = [];
-
-  for (const repo of topRepos) {
-    const readme = await fetchRepoReadme(octokit, profile.username, repo.name);
-    repoDetails.push({
-      name: repo.name,
-      description: repo.description,
-      readme,
-      topics: repo.topics,
-      language: repo.language,
-      stars: repo.stars,
-    });
+  
+  for (let i = 0; i < topRepos.length; i += CONCURRENCY) {
+    const batch = topRepos.slice(i, i + CONCURRENCY);
+    const batchResults = await Promise.all(
+      batch.map(async (repo) => {
+        const readme = await fetchRepoReadme(octokit, profile.username, repo.name);
+        return {
+          name: repo.name,
+          description: repo.description,
+          readme,
+          topics: repo.topics,
+          language: repo.language,
+          stars: repo.stars,
+        };
+      })
+    );
+    repoDetails.push(...batchResults);
   }
 
   return repoDetails;
@@ -86,7 +96,7 @@ export async function generateEnhancedBio(
   apiKey: string,
   language: SupportedLanguage = 'en'
 ): Promise<string> {
-  const openai = new OpenAI({ apiKey });
+  const openai = getOpenAIClient(apiKey);
 
   const repoSummaries = repoDetails.map(repo => {
     let summary = `- ${repo.name}`;
@@ -139,7 +149,7 @@ export async function generateMultiLanguageBio(
   apiKey: string,
   languages: SupportedLanguage[] = ['en', 'it', 'es']
 ): Promise<Record<SupportedLanguage, string>> {
-  const openai = new OpenAI({ apiKey });
+  const openai = getOpenAIClient(apiKey);
 
   const prompt = `Generate a professional GitHub profile bio for this developer in multiple languages.
 
@@ -177,10 +187,32 @@ Return ONLY the JSON, no markdown or explanations.`;
   try {
     const content = response.choices[0]?.message?.content?.trim() || '{}';
     // Remove potential markdown code blocks
-    const jsonStr = content.replace(/```json?\n?|\n?```/g, '');
-    return JSON.parse(jsonStr);
+    const jsonStr = content.replace(/```json?\n?|\n?```/g, '').trim();
+    const parsed = JSON.parse(jsonStr);
+    
+    // Validate the response structure
+    if (typeof parsed !== 'object' || parsed === null) {
+      throw new Error('Invalid response format');
+    }
+    
+    // Ensure all values are strings and filter to requested languages
+    const result: Record<string, string> = {};
+    for (const lang of languages) {
+      if (typeof parsed[lang] === 'string' && parsed[lang].length > 0) {
+        result[lang] = parsed[lang];
+      } else {
+        // Fallback to existing bio for missing languages
+        result[lang] = analysis.profile.bio || '';
+      }
+    }
+    return result as Record<SupportedLanguage, string>;
   } catch {
-    return { en: analysis.profile.bio || '' } as Record<SupportedLanguage, string>;
+    // Return fallback with existing bio for all requested languages
+    const fallback: Record<string, string> = {};
+    for (const lang of languages) {
+      fallback[lang] = analysis.profile.bio || '';
+    }
+    return fallback as Record<SupportedLanguage, string>;
   }
 }
 
@@ -200,7 +232,7 @@ export async function suggestImprovements(
   existingReadme: string | null,
   apiKey: string
 ): Promise<ProfileSuggestion[]> {
-  const openai = new OpenAI({ apiKey });
+  const openai = getOpenAIClient(apiKey);
 
   const prompt = `Analyze this GitHub profile and provide specific improvement suggestions.
 
@@ -253,8 +285,29 @@ Return ONLY the JSON array, no markdown or explanations.`;
 
   try {
     const content = response.choices[0]?.message?.content?.trim() || '[]';
-    const jsonStr = content.replace(/```json?\n?|\n?```/g, '');
-    return JSON.parse(jsonStr);
+    const jsonStr = content.replace(/```json?\n?|\n?```/g, '').trim();
+    const parsed = JSON.parse(jsonStr);
+    
+    // Validate the response is an array
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    
+    // Validate and filter each suggestion
+    const validCategories = ['bio', 'readme', 'repos', 'profile', 'engagement'];
+    const validPriorities = ['high', 'medium', 'low'];
+    
+    return parsed.filter((item): item is ProfileSuggestion => {
+      return (
+        typeof item === 'object' &&
+        item !== null &&
+        typeof item.title === 'string' &&
+        typeof item.description === 'string' &&
+        typeof item.actionable === 'string' &&
+        validCategories.includes(item.category) &&
+        validPriorities.includes(item.priority)
+      );
+    });
   } catch {
     return [];
   }
@@ -264,16 +317,22 @@ Return ONLY the JSON array, no markdown or explanations.`;
  * Fetch existing profile README
  */
 export async function fetchExistingReadme(username: string): Promise<string | null> {
+  const TIMEOUT = 10000; // 10 seconds timeout for README fetch
+  
   try {
     // Try main branch first
-    let response = await fetch(
-      `https://raw.githubusercontent.com/${username}/${username}/main/README.md`
+    let response = await fetchWithTimeout(
+      `https://raw.githubusercontent.com/${username}/${username}/main/README.md`,
+      {},
+      TIMEOUT
     );
     
     if (!response.ok) {
       // Try master branch
-      response = await fetch(
-        `https://raw.githubusercontent.com/${username}/${username}/master/README.md`
+      response = await fetchWithTimeout(
+        `https://raw.githubusercontent.com/${username}/${username}/master/README.md`,
+        {},
+        TIMEOUT
       );
     }
 
@@ -282,6 +341,7 @@ export async function fetchExistingReadme(username: string): Promise<string | nu
     }
     return null;
   } catch {
+    // Timeout or network error - return null silently
     return null;
   }
 }

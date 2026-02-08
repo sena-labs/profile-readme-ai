@@ -10,6 +10,8 @@ import { social } from './commands/social.js';
 import { initTheme } from './commands/init-theme.js';
 import { analyze } from './commands/analyze.js';
 import { translate } from './commands/translate.js';
+import { stats } from './commands/stats.js';
+import { actions } from './commands/actions.js';
 import { VERSION, showDetailedVersion, checkFirstRun, showWelcomeMessage } from './utils/version.js';
 
 const program = new Command();
@@ -55,6 +57,7 @@ program
   .option('-o, --output <path>', 'Output file path', './README.md')
   .option('--no-ai', 'Skip AI bio generation')
   .option('--no-stats', 'Skip GitHub stats cards')
+  .option('--dry-run', 'Preview output without saving to file')
   .action(generate);
 
 program
@@ -100,6 +103,20 @@ program
   .description('Create a sample custom theme JSON file')
   .option('-o, --output <path>', 'Output file path', './my-theme.json')
   .action(initTheme);
+
+program
+  .command('stats')
+  .description('Show detailed GitHub statistics (no AI required)')
+  .option('-u, --username <username>', 'GitHub username')
+  .option('--json', 'Output as JSON')
+  .action(stats);
+
+program
+  .command('actions')
+  .description('Generate GitHub Actions workflow for auto-updating README')
+  .option('-o, --output <path>', 'Output file path', '.github/workflows/update-readme.yml')
+  .option('-s, --schedule <cron>', 'Cron schedule (e.g., "0 0 * * *")')
+  .action(actions);
 
 program
   .command('themes')

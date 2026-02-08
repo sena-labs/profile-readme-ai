@@ -2,19 +2,20 @@ import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
 import fs from 'fs/promises';
-import Conf from 'conf';
-import { analyzeGitHubProfile, type GitHubAnalysis } from '../services/github.js';
+import { analyzeGitHubProfile, isValidUsername, type GitHubAnalysis } from '../services/github.js';
 import { generateBio, generateTagline } from '../services/ai.js';
 import { generateReadme } from '../templates/index.js';
-
-const config = new Conf({ projectName: 'profile-readme-ai' });
+import { loadCustomTheme, generateCustomTheme } from '../templates/custom.js';
+import { getOpenAIKey, getGitHubToken } from '../utils/config.js';
 
 interface GenerateOptions {
   username?: string;
   theme: string;
+  themeFile?: string;
   output: string;
   ai: boolean;
   stats: boolean;
+  dryRun?: boolean;
 }
 
 export async function generate(options: GenerateOptions): Promise<void> {
@@ -27,19 +28,29 @@ export async function generate(options: GenerateOptions): Promise<void> {
           type: 'input',
           name: 'username',
           message: 'Enter your GitHub username:',
-          validate: (input: string) => input.length > 0 || 'Username is required',
+          validate: (input: string) => {
+            if (!input || input.length === 0) return 'Username is required';
+            if (!isValidUsername(input)) return 'Invalid GitHub username format';
+            return true;
+          },
         },
       ]);
       username = answers.username;
+    } else if (!isValidUsername(username)) {
+      console.error(chalk.red('Invalid GitHub username format'));
+      return;
     }
+
+    // At this point username is guaranteed to be a valid string
+    const validUsername = username as string;
 
     // Analyze GitHub profile
     const spinner = ora('Analyzing GitHub profile...').start();
     
     let analysis: GitHubAnalysis;
     try {
-      const githubToken = config.get('githubToken') as string | undefined;
-      analysis = await analyzeGitHubProfile(username!, githubToken);
+      const githubToken = getGitHubToken();
+      analysis = await analyzeGitHubProfile(validUsername, githubToken);
       spinner.succeed(`Found ${analysis.profile.publicRepos} repos, ${analysis.totalStars} stars`);
     } catch (error) {
       spinner.fail('Failed to fetch GitHub profile');
@@ -61,7 +72,7 @@ export async function generate(options: GenerateOptions): Promise<void> {
     let tagline = '';
 
     if (options.ai) {
-      const openaiKey = config.get('openaiKey') as string | undefined;
+      const openaiKey = getOpenAIKey();
       
       if (openaiKey) {
         const aiSpinner = ora('Generating AI-powered bio...').start();
@@ -79,9 +90,9 @@ export async function generate(options: GenerateOptions): Promise<void> {
       }
     }
 
-    // Select theme if not specified
+    // Select theme if not specified (skip if using custom theme file)
     let theme = options.theme;
-    if (!options.theme || options.theme === 'minimal') {
+    if ((!options.theme || options.theme === 'minimal') && !options.themeFile) {
       const themeAnswer = await inquirer.prompt([
         {
           type: 'list',
@@ -105,13 +116,24 @@ export async function generate(options: GenerateOptions): Promise<void> {
 
     // Generate README
     const readmeSpinner = ora('Generating README...').start();
-    const readme = generateReadme(analysis, {
-      theme,
-      bio,
-      tagline,
-      includeStats: options.stats,
-    });
-    readmeSpinner.succeed('README generated');
+    let readme: string;
+    if (options.themeFile) {
+      const customConfig = await loadCustomTheme(options.themeFile);
+      readme = generateCustomTheme(analysis, customConfig, {
+        bio,
+        tagline,
+        includeStats: options.stats,
+      });
+      readmeSpinner.succeed(`README generated with custom theme: ${customConfig.name}`);
+    } else {
+      readme = generateReadme(analysis, {
+        theme,
+        bio,
+        tagline,
+        includeStats: options.stats,
+      });
+      readmeSpinner.succeed('README generated');
+    }
 
     // Preview
     console.log(chalk.bold('\n📝 Preview (first 30 lines):\n'));
@@ -122,6 +144,17 @@ export async function generate(options: GenerateOptions): Promise<void> {
       console.log(chalk.gray('... (truncated)'));
     }
     console.log(chalk.gray('─'.repeat(60)));
+
+    // Handle dry-run mode
+    if (options.dryRun) {
+      console.log(chalk.cyan('\n🔍 Dry-run mode - no file will be saved'));
+      console.log(chalk.bold('\n📄 Full README output:\n'));
+      console.log(chalk.gray('─'.repeat(60)));
+      console.log(readme);
+      console.log(chalk.gray('─'.repeat(60)));
+      console.log(chalk.green('\n✓ Dry-run complete. Use without --dry-run to save.'));
+      return;
+    }
 
     // Confirm save
     const { confirmSave } = await inquirer.prompt([
@@ -146,7 +179,10 @@ export async function generate(options: GenerateOptions): Promise<void> {
     }
 
   } catch (error) {
-    console.error(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`));
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    // Sanitize error message to not expose system paths
+    const sanitizedMessage = message.replace(/[A-Z]:\\[^\s]+/gi, '[path]').replace(/\/[^\s]+\/[^\s]+/g, '[path]');
+    console.error(chalk.red(`Error: ${sanitizedMessage}`));
     process.exit(1);
   }
 }

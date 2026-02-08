@@ -1,8 +1,8 @@
-import OpenAI from 'openai';
 import type { GitHubAnalysis } from './github.js';
+import { getOpenAIClient } from '../utils/clients.js';
 
 export async function generateBio(analysis: GitHubAnalysis, apiKey: string): Promise<string> {
-  const openai = new OpenAI({ apiKey });
+  const openai = getOpenAIClient(apiKey);
 
   const prompt = `Generate a professional and engaging GitHub profile bio for a developer with the following characteristics:
 
@@ -35,7 +35,7 @@ Return ONLY the bio text, no quotes or explanations.`;
 }
 
 export async function generateTagline(analysis: GitHubAnalysis, apiKey: string): Promise<string> {
-  const openai = new OpenAI({ apiKey });
+  const openai = getOpenAIClient(apiKey);
 
   const prompt = `Create a short, memorable tagline (max 10 words) for a ${analysis.topLanguages[0] || 'software'} developer.
 Username: ${analysis.profile.username}

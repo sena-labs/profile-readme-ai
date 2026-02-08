@@ -1,11 +1,9 @@
 import chalk from 'chalk';
 import boxen from 'boxen';
-import Conf from 'conf';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-const config = new Conf({ projectName: 'profile-readme-ai' });
+import { hasOpenAIKey, hasGitHubToken, isFirstRun as checkIsFirstRun } from './config.js';
 
 // Get package version
 function getPackageVersion(): string {
@@ -22,8 +20,8 @@ function getPackageVersion(): string {
 export const VERSION = getPackageVersion();
 
 export function showDetailedVersion(): void {
-  const hasOpenAI = config.has('openaiKey');
-  const hasGitHub = config.has('githubToken');
+  const hasOpenAI = hasOpenAIKey();
+  const hasGitHub = hasGitHubToken();
 
   const info = `
 ${chalk.bold.cyan('Profile README AI')} ${chalk.gray(`v${VERSION}`)}
@@ -43,12 +41,7 @@ ${chalk.gray('npm:        https://www.npmjs.com/package/profile-readme-ai')}
 }
 
 export function checkFirstRun(): boolean {
-  const hasRun = config.get('hasRun') as boolean | undefined;
-  if (!hasRun) {
-    config.set('hasRun', true);
-    return true;
-  }
-  return false;
+  return checkIsFirstRun();
 }
 
 export function showWelcomeMessage(): void {

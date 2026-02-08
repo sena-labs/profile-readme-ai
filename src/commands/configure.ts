@@ -1,14 +1,12 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import Conf from 'conf';
-
-const config = new Conf({ projectName: 'profile-readme-ai' });
+import { getOpenAIKey, getGitHubToken, setOpenAIKey, setGitHubToken } from '../utils/config.js';
 
 export async function configure(): Promise<void> {
   console.log(chalk.bold('\n⚙️  Configuration\n'));
 
-  const currentGithubToken = config.get('githubToken') as string | undefined;
-  const currentOpenaiKey = config.get('openaiKey') as string | undefined;
+  const currentGithubToken = getGitHubToken();
+  const currentOpenaiKey = getOpenAIKey();
 
   console.log(chalk.gray('Current configuration:'));
   console.log(`  GitHub Token: ${currentGithubToken ? chalk.green('✓ Set') : chalk.yellow('✗ Not set')}`);
@@ -34,12 +32,12 @@ export async function configure(): Promise<void> {
 
   // Save configuration
   if (answers.githubToken && answers.githubToken !== '(keep current)') {
-    config.set('githubToken', answers.githubToken);
+    setGitHubToken(answers.githubToken);
     console.log(chalk.green('✓ GitHub token saved'));
   }
 
   if (answers.openaiKey && answers.openaiKey !== '(keep current)') {
-    config.set('openaiKey', answers.openaiKey);
+    setOpenAIKey(answers.openaiKey);
     console.log(chalk.green('✓ OpenAI key saved'));
   }
 

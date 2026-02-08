@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
+import { isValidUsername } from '../services/github.js';
 
 interface PreviewOptions {
   username?: string;
@@ -15,10 +16,17 @@ export async function preview(options: PreviewOptions): Promise<void> {
         type: 'input',
         name: 'username',
         message: 'Enter GitHub username to preview:',
-        validate: (input: string) => input.length > 0 || 'Username is required',
+        validate: (input: string) => {
+          if (!input || input.length === 0) return 'Username is required';
+          if (!isValidUsername(input)) return 'Invalid GitHub username format';
+          return true;
+        },
       },
     ]);
     username = answers.username;
+  } else if (!isValidUsername(username)) {
+    console.error(chalk.red('Invalid GitHub username format'));
+    return;
   }
 
   const spinner = ora('Fetching profile README...').start();
@@ -53,7 +61,9 @@ export async function preview(options: PreviewOptions): Promise<void> {
 
   } catch (error) {
     spinner.fail('Failed to fetch README');
-    console.error(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`));
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    const sanitizedMessage = message.replace(/[A-Z]:\\[^\s]+/gi, '[path]').replace(/\/[^\s]+\/[^\s]+/g, '[path]');
+    console.error(chalk.red(`Error: ${sanitizedMessage}`));
   }
 }
 
