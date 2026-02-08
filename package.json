@@ -1,0 +1,64 @@
+{
+  "name": "profile-readme-ai",
+  "version": "1.0.0",
+  "description": "🚀 AI-powered GitHub Profile README generator - analyze your repos and generate stunning profiles in seconds",
+  "main": "dist/index.js",
+  "bin": {
+    "profile-readme-ai": "dist/cli.js",
+    "prai": "dist/cli.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "github",
+    "profile",
+    "readme",
+    "generator",
+    "ai",
+    "cli",
+    "markdown",
+    "github-profile",
+    "readme-generator",
+    "profile-readme",
+    "openai",
+    "developer-tools"
+  ],
+  "author": "sena-labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sena-labs/profile-readme-ai"
+  },
+  "homepage": "https://github.com/sena-labs/profile-readme-ai#readme",
+  "bugs": {
+    "url": "https://github.com/sena-labs/profile-readme-ai/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "inquirer": "^9.2.0",
+    "ora": "^8.0.0",
+    "octokit": "^3.1.0",
+    "openai": "^4.28.0",
+    "conf": "^12.0.0",
+    "boxen": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/inquirer": "^9.0.7",
+    "typescript": "^5.3.0",
+    "tsx": "^4.7.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0"
+  }
+}
