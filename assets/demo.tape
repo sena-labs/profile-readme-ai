@@ -1,28 +1,22 @@
 # VHS Demo Recording for profile-readme-ai
-Output assets/demo.gif
+Output demo.gif
 
 Set Shell "pwsh"
-Set FontSize 16
+Set FontSize 18
 Set Width 900
-Set Height 500
+Set Height 450
 Set Theme "Dracula"
-Set Padding 20
-Set Framerate 30
-
-# Start with clear screen
-Hide
-Type "clear"
-Enter
-Sleep 500ms
-Show
+Set Padding 15
+Set Framerate 24
+Set TypingSpeed 50ms
 
 # Show the command
 Type "npx profile-readme-ai generate -u octocat -t neon --dry-run"
-Sleep 500ms
+Sleep 300ms
 Enter
 
 # Wait for execution
-Sleep 8s
+Sleep 12s
 
 # Pause at the end to show result
-Sleep 3s
+Sleep 2s
